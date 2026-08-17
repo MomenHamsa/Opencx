@@ -9,6 +9,7 @@ import {
   ListInput,
   ListRow,
   ManagerLayout,
+  SavedFlash,
   Select,
   TextArea,
   TextInput,
@@ -48,6 +49,7 @@ export function TestManager({
   const [draft, setDraft] = useState<GoldenCase | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
+  const [savedAt, setSavedAt] = useState<number | null>(null);
 
   const selected = cases.find((c) => c.ticket.id === selectedId) ?? null;
   const editing = draft ?? selected;
@@ -82,6 +84,7 @@ export function TestManager({
       );
       setSelectedId(result.item.ticket.id);
       setDraft(null);
+      setSavedAt(Date.now());
       router.refresh();
     }
     setBusy(false);
@@ -294,6 +297,7 @@ export function TestManager({
                   </Button>
                 )}
                 {draft !== null && !isNew && <Button onClick={() => setDraft(null)}>Discard</Button>}
+              <SavedFlash at={savedAt} />
               </div>
             </section>
           </div>

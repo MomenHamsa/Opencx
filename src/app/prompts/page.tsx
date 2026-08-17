@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/PageHeader";
 import { PromptManager } from "@/components/manage/PromptManager";
 import { runCountsByPrompt } from "@/lib/eval/store";
 import { SEED_PROMPTS } from "@/lib/seed/prompts";
@@ -10,13 +11,9 @@ export default async function PromptsPage() {
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-8">
-      <header className="mb-6">
-        <h1 className="text-lg font-semibold">Prompts</h1>
-        <p className="text-muted">
-          Versions are append-only. Once a version has been evaluated its text is frozen,
-          because a score is attached to that exact wording.
-        </p>
-      </header>
+      <PageHeader title="Prompts">
+        Versions are append-only. Once a version has been evaluated its text is frozen, because a score is attached to that exact wording.
+      </PageHeader>
 
       <PromptManager
         initial={workspace.prompts}

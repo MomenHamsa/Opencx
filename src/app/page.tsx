@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/PageHeader";
 import { EvalScreen } from "@/components/eval/EvalScreen";
 import { loadBaseline } from "@/lib/eval/store";
 import { providerOptions } from "@/lib/llm/factory";
@@ -20,13 +21,16 @@ export default async function Home() {
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-8">
-      <header className="mb-6">
-        <h1 className="text-lg font-semibold">CX Agent Lab</h1>
-        <p className="text-muted">
-          A support agent, a receipt for every answer it gives, and a fixed exam that
-          scores it.
-        </p>
-      </header>
+      <PageHeader
+        title="Run evaluation"
+        aside={
+          <a href="/runs" className="font-mono text-xs text-info hover:underline">
+            run history →
+          </a>
+        }
+      >
+        Score every test against a prompt, and compare the result to your baseline.
+      </PageHeader>
 
       <EvalScreen
         testCount={workspace.cases.length}

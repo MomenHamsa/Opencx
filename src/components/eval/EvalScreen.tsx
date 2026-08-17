@@ -190,7 +190,7 @@ export function EvalScreen({
         and result are different questions and now look like it: one card you
         configure, one card that answers.
       */}
-      <section className="rounded-md border border-line bg-panel">
+      <section className="rounded border border-line bg-panel">
         <div className="flex flex-wrap items-end gap-x-5 gap-y-3 p-4">
           <Field label="prompt">
             <select
@@ -299,14 +299,14 @@ export function EvalScreen({
       {running && <RunProgress done={rows.length} total={testCount} startedAt={startedAt} />}
 
       {error !== null && (
-        <div className="rounded-md border border-fail/50 bg-fail/10 px-4 py-3 font-mono text-xs text-fail">
+        <div className="rounded border border-fail/50 bg-fail/10 px-4 py-3 font-mono text-xs text-fail">
           {error}
         </div>
       )}
 
       {/* The answer. Only appears once there is one. */}
       {rows.length > 0 && (
-        <section className="flex flex-wrap items-center gap-x-8 gap-y-3 rounded-md border border-line bg-panel px-5 py-4">
+        <section className="flex flex-wrap items-center gap-x-8 gap-y-3 rounded border border-line bg-panel px-5 py-4">
           <div>
             <div className="tnum font-mono text-4xl leading-none font-semibold">
               <span className={passed === rows.length ? "text-pass" : "text-text"}>{passed}</span>

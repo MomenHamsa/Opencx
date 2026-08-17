@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/PageHeader";
 import { TestManager } from "@/components/manage/TestManager";
 import { loadWorkspace } from "@/lib/workspace/store";
 
@@ -8,13 +9,9 @@ export default async function TestsPage() {
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-8">
-      <header className="mb-6">
-        <h1 className="text-lg font-semibold">Tests</h1>
-        <p className="text-muted">
-          The exam. Every escalation a customer complains about should end up here, so
-          it can never regress.
-        </p>
-      </header>
+      <PageHeader title="Tests">
+        The exam. Every escalation a customer complains about should end up here, so it can never regress.
+      </PageHeader>
 
       <TestManager initial={workspace.cases} articles={workspace.articles} />
     </main>

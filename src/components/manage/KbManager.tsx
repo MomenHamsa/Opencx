@@ -9,6 +9,7 @@ import {
   ListInput,
   ListRow,
   ManagerLayout,
+  SavedFlash,
   TextArea,
   TextInput,
 } from "@/components/ui/form";
@@ -34,6 +35,7 @@ export function KbManager({ initial }: { initial: Article[] }) {
   const [draft, setDraft] = useState<Article | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
+  const [savedAt, setSavedAt] = useState<number | null>(null);
 
   const selected = articles.find((a) => a.id === selectedId) ?? null;
   const editing = draft ?? selected;
@@ -74,6 +76,7 @@ export function KbManager({ initial }: { initial: Article[] }) {
       );
       setSelectedId(result.item.id);
       setDraft(null);
+      setSavedAt(Date.now());
       // The retriever indexes these, so anything showing article counts or running
       // an eval needs the new corpus.
       router.refresh();
@@ -176,6 +179,7 @@ export function KbManager({ initial }: { initial: Article[] }) {
               {draft !== null && !isNew && (
                 <Button onClick={() => setDraft(null)}>Discard</Button>
               )}
+              <SavedFlash at={savedAt} />
               {editing.updatedAt !== "" && (
                 <span className="ml-auto font-mono text-[11px] text-muted">
                   updated {editing.updatedAt}

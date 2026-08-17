@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/PageHeader";
 import Link from "next/link";
 import { formatTokens, formatUsd } from "@/lib/cost";
 import { listRuns, loadBaseline } from "@/lib/eval/store";
@@ -19,13 +20,9 @@ export default async function RunsPage() {
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-8">
-      <header className="mb-6">
-        <h1 className="text-lg font-semibold">Run history</h1>
-        <p className="text-muted">
-          Every evaluation, newest first. A score is only meaningful next to the prompt
-          and the model that produced it.
-        </p>
-      </header>
+      <PageHeader title="Run history">
+        Every evaluation, newest first. A score is only meaningful next to the prompt and the model that produced it.
+      </PageHeader>
 
       {runs.length === 0 ? (
         <p className="rounded border border-line bg-panel px-4 py-6 text-center text-muted">

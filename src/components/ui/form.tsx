@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * Form primitives shared by the three authoring screens.
@@ -94,6 +94,27 @@ export function ErrorList({ errors }: { errors: string[] }) {
       </ul>
     </div>
   );
+}
+
+/**
+ * Transient confirmation that a save landed.
+ *
+ * Without it, saving an article looked identical to not saving one: the errors
+ * cleared and nothing else moved. Silence after a destructive-feeling action is
+ * how people end up clicking Save three times.
+ */
+export function SavedFlash({ at }: { at: number | null }) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (at === null) return;
+    setVisible(true);
+    const timer = setTimeout(() => setVisible(false), 2400);
+    return () => clearTimeout(timer);
+  }, [at]);
+
+  if (!visible) return null;
+  return <span className="font-mono text-xs text-pass">saved</span>;
 }
 
 export function Button({

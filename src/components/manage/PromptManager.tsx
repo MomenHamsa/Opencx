@@ -8,6 +8,7 @@ import {
   Field,
   ListRow,
   ManagerLayout,
+  SavedFlash,
   TextArea,
   TextInput,
 } from "@/components/ui/form";
@@ -43,6 +44,7 @@ export function PromptManager({
   const [draft, setDraft] = useState<PromptVersion | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
+  const [savedAt, setSavedAt] = useState<number | null>(null);
 
   const selected = prompts.find((p) => p.id === selectedId) ?? null;
   const editing = draft ?? selected;
@@ -87,6 +89,7 @@ export function PromptManager({
       );
       setSelectedId(result.item.id);
       setDraft(null);
+      setSavedAt(Date.now());
       router.refresh();
     }
     setBusy(false);
@@ -236,6 +239,7 @@ export function PromptManager({
                 </Button>
               )}
               {draft !== null && !isNew && <Button onClick={() => setDraft(null)}>Discard</Button>}
+              <SavedFlash at={savedAt} />
               <span className="ml-auto font-mono text-[11px] text-muted">
                 {editing.system.length} characters
               </span>

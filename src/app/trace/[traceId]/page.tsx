@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { notFound } from "next/navigation";
 import { WEAK_RETRIEVAL_SCORE } from "@/lib/config";
 import { findCase, loadWorkspace } from "@/lib/workspace/store";
@@ -39,12 +40,15 @@ export default async function TracePage({
         ← eval run
       </Link>
 
-      <header className="mt-3 mb-6">
-        <h1 className="font-mono text-base">{trace.traceId}</h1>
-        <p className="text-muted">
-          {trace.ticket.id} — {trace.ticket.subject}
-        </p>
-      </header>
+      <PageHeader
+        title={`${trace.ticket.id} — ${trace.ticket.subject}`}
+        aside={
+          <span className="font-mono text-[11px] text-faint">{trace.traceId}</span>
+        }
+      >
+        The full receipt for one answer: what was retrieved, what was looked up, what
+        the model actually returned, and what the customer would have read.
+      </PageHeader>
 
       {trace.degraded && (
         <div className="mb-5 rounded border border-fail/50 bg-fail/10 px-4 py-3">
