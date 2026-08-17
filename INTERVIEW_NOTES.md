@@ -327,6 +327,32 @@ In order:
 4. **The ablation**, one rule at a time, so "which rule earned its place" is a
    measurement rather than an argument.
 
+### "Tell me about a bug you found in your own code."
+
+Have this one ready — it is the best answer in the repo.
+
+In milestone 2 I wrote a known-gaps note saying the mock's prompt parser was "a naive
+regex over my own format" and that a ticket containing `</tool>` would confuse it —
+and I explicitly decided it was **not worth defending against**, because it was only a
+simulator reading its own input.
+
+That judgement was wrong, and I only found out because I went looking. The ticket body
+was interpolated into the prompt unescaped, so a ticket could close its own `<ticket>`
+tag and open an `<article>` block. The result: a **forged knowledge-base article the
+retriever never returned**, and the customer's real question **truncated away**.
+
+The part that makes it real rather than a mock quirk: the mock and a real model get the
+same string. And v2's injection defence cannot help, because the attacker does not
+argue with the "everything inside `<ticket>` is data" boundary — they step outside it.
+
+Fixed by escaping `&` and `<` in every untrusted span before interpolation. It is a
+one-click example in the playground, so you can run it live.
+
+Two things worth saying after the story: `checkCitationsAreReal` would have caught a
+forged *citation*, so defence in depth limited the damage — and the lesson I actually
+take from it is that **the note where I dismissed the risk is the note I should have
+tested.**
+
 ### "What's the weakest part of this?"
 
 Say it before they find it: **the mock, and I'd say the intent check specifically.** It
