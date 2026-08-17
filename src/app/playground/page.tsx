@@ -1,5 +1,5 @@
 import { PlaygroundForm } from "@/components/playground/PlaygroundForm";
-import { providerAvailability } from "@/lib/llm/factory";
+import { providerOptions } from "@/lib/llm/factory";
 import { loadWorkspace } from "@/lib/workspace/store";
 
 export const dynamic = "force-dynamic";
@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export default async function PlaygroundPage() {
   const workspace = await loadWorkspace();
   const prompts = workspace.prompts.map((p) => ({ id: p.id, label: p.label }));
-  const { realConfigured, realModel } = providerAvailability();
+  const providers = providerOptions();
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-8">
@@ -21,8 +21,7 @@ export default async function PlaygroundPage() {
 
       <PlaygroundForm
         prompts={prompts}
-        realConfigured={realConfigured}
-        realModel={realModel}
+        providers={providers}
       />
     </main>
   );

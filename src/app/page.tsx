@@ -1,6 +1,6 @@
 import { EvalScreen } from "@/components/eval/EvalScreen";
 import { loadBaseline } from "@/lib/eval/store";
-import { providerAvailability } from "@/lib/llm/factory";
+import { providerOptions } from "@/lib/llm/factory";
 import { loadWorkspace } from "@/lib/workspace/store";
 
 // Reads the baseline off disk on every request; there is nothing to prerender.
@@ -16,7 +16,7 @@ export default async function Home() {
 
   // Read server-side: whether a key exists is not something the browser should be
   // guessing at, and the key itself never leaves this process.
-  const { realConfigured, realModel } = providerAvailability();
+  const providers = providerOptions();
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-8">
@@ -31,8 +31,7 @@ export default async function Home() {
       <EvalScreen
         prompts={prompts}
         initialBaseline={baseline}
-        realConfigured={realConfigured}
-        realModel={realModel}
+        providers={providers}
       />
     </main>
   );

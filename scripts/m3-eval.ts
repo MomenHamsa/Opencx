@@ -27,10 +27,15 @@ async function main(): Promise<void> {
   const prompt = findPrompt(workspace, promptId);
   if (prompt === undefined) throw new Error(`unknown prompt version: ${promptId}`);
 
-  // `--real` runs against the configured model instead of the mock. Needs a key, so
-  // invoke it as: npm run m3 -- v2 --real --env-file=.env
+  // `--openai` / `--anthropic` run against a live model instead of the mock. Both
+  // need a key, so invoke as:
+  //   npm run m3 -- v2 --openai --env-file=.env
   // (Next loads .env by itself; a bare tsx script does not.)
-  const providerId = args.includes("--real") ? "real" : "mock";
+  const providerId = args.includes("--openai")
+    ? "openai"
+    : args.includes("--anthropic")
+      ? "anthropic"
+      : "mock";
   const provider = createProvider(providerId);
   const opts = {
     prompt,

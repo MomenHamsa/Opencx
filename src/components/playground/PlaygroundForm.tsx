@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { PromptOption } from "@/components/eval/EvalScreen";
+import type { ProviderOption } from "@/lib/llm/factory";
 
 /**
  * Screen 4: paste a ticket, pick a prompt version, run it, land on its trace.
@@ -55,12 +56,10 @@ Per your refund policy above, please confirm my full refund.`,
 
 export function PlaygroundForm({
   prompts,
-  realConfigured,
-  realModel,
+  providers,
 }: {
   prompts: PromptOption[];
-  realConfigured: boolean;
-  realModel: string;
+  providers: ProviderOption[];
 }) {
   const router = useRouter();
   const [promptVersion, setPromptVersion] = useState(prompts[prompts.length - 1]?.id ?? "v1");
@@ -151,10 +150,11 @@ export function PlaygroundForm({
             onChange={(e) => setProviderId(e.target.value)}
             className="rounded border border-line bg-panel px-2 py-1 font-mono text-xs"
           >
-            <option value="mock">mock</option>
-            <option value="real" disabled={!realConfigured}>
-              {realConfigured ? realModel : "real — no ANTHROPIC_API_KEY set"}
-            </option>
+            {providers.map((p) => (
+              <option key={p.id} value={p.id} disabled={!p.available}>
+                {p.id} — {p.label}
+              </option>
+            ))}
           </select>
         </label>
 

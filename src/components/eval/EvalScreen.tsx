@@ -4,6 +4,7 @@ import { useState } from "react";
 import { DiffPanel } from "@/components/eval/DiffPanel";
 import { ResultsTable } from "@/components/eval/ResultsTable";
 import { diffAgainstBaseline } from "@/lib/eval/diff";
+import type { ProviderOption } from "@/lib/llm/factory";
 import type { BaselineDiff, EvalRow, EvalRun } from "@/lib/types";
 
 /**
@@ -24,13 +25,11 @@ type Status = "idle" | "running" | "done" | "error";
 export function EvalScreen({
   prompts,
   initialBaseline,
-  realConfigured,
-  realModel,
+  providers,
 }: {
   prompts: PromptOption[];
   initialBaseline: EvalRun | null;
-  realConfigured: boolean;
-  realModel: string;
+  providers: ProviderOption[];
 }) {
   const [promptVersion, setPromptVersion] = useState(prompts[prompts.length - 1]?.id ?? "v1");
   const [providerId, setProviderId] = useState("mock");
@@ -149,6 +148,7 @@ export function EvalScreen({
   }
 
   const passed = rows.filter((r) => r.passed).length;
+  const isLive = providers.find((p) => p.id === providerId)?.live === true;
   const running = status === "running";
 
   return (
@@ -177,17 +177,18 @@ export function EvalScreen({
             disabled={running}
             className="rounded border border-line bg-raised px-2 py-1 font-mono text-xs disabled:opacity-50"
           >
-            <option value="mock">mock</option>
-            <option value="real" disabled={!realConfigured}>
-              {realConfigured ? realModel : "real — no ANTHROPIC_API_KEY set"}
-            </option>
+            {providers.map((p) => (
+              <option key={p.id} value={p.id} disabled={!p.available}>
+                {p.id} — {p.label}
+              </option>
+            ))}
           </select>
         </Field>
 
-        {providerId === "real" && (
+        {isLive && (
           <span className="max-w-xs text-xs text-warn">
-            Real model: 14 live API calls per run, billed to your key, and slower than
-            the mock. Rows still stream in as they finish.
+            Live model: one API call per test, billed to your key, and slower than the
+            mock. Rows still stream in as they finish.
           </span>
         )}
 

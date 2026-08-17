@@ -10,11 +10,13 @@
     "typecheck": "tsc --noEmit",
     "m1": "tsx scripts/m1-smoke.ts",
     "m2": "tsx scripts/m2-smoke.ts",
-    "m3": "tsx scripts/m3-eval.ts"
+    "m3": "tsx scripts/m3-eval.ts",
+    "models": "tsx scripts/models.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.117.1",
     "next": "15.5.23",
+    "openai": "^7.5.0",
     "react": "19.2.0",
     "react-dom": "19.2.0"
   },

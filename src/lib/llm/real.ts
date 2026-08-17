@@ -36,7 +36,7 @@ export function isRealProviderConfigured(): boolean {
 }
 
 export function realProviderModel(): string {
-  const configured = (process.env.LLM_MODEL ?? "").trim();
+  const configured = (process.env.ANTHROPIC_MODEL ?? "").trim();
   return configured === "" ? DEFAULT_MODEL : configured;
 }
 
