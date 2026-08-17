@@ -1,11 +1,12 @@
 import { PlaygroundForm } from "@/components/playground/PlaygroundForm";
 import { providerAvailability } from "@/lib/llm/factory";
-import { PROMPT_VERSIONS } from "@/lib/prompt/versions";
+import { loadWorkspace } from "@/lib/workspace/store";
 
 export const dynamic = "force-dynamic";
 
-export default function PlaygroundPage() {
-  const prompts = PROMPT_VERSIONS.map((p) => ({ id: p.id, label: p.label }));
+export default async function PlaygroundPage() {
+  const workspace = await loadWorkspace();
+  const prompts = workspace.prompts.map((p) => ({ id: p.id, label: p.label }));
   const { realConfigured, realModel } = providerAvailability();
 
   return (

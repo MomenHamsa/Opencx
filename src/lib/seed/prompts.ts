@@ -88,13 +88,4 @@ Respond with JSON only, nothing before or after it, with these fields:
  * Append-only. v1 keeps its baseline score attached to it and is never edited —
  * a baseline you can go back and change is not a baseline.
  */
-export const PROMPT_VERSIONS: PromptVersion[] = [V1, V2];
-
-export function getPromptVersion(id: string): PromptVersion | undefined {
-  return PROMPT_VERSIONS.find((p) => p.id === id);
-}
-
-export const DEFAULT_PROMPT_VERSION = "v1";
-
-/** Referenced so the constant and the prompt text cannot drift apart once v2 exists. */
-export const DOCUMENTED_HANDOFF_CONFIDENCE = HANDOFF_CONFIDENCE;
+export const SEED_PROMPTS: PromptVersion[] = [V1, V2];

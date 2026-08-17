@@ -2,8 +2,8 @@ import { randomUUID } from "node:crypto";
 import { runAgent } from "@/lib/agent/run";
 import { categorise, rowPassed, runChecks } from "@/lib/eval/checks";
 import type { Judge } from "@/lib/eval/judge";
-import { GOLDEN_CASES } from "@/lib/golden/cases";
 import type {
+  Article,
   EvalRow,
   EvalRun,
   GoldenCase,
@@ -26,7 +26,10 @@ export interface EvalOptions {
   provider: LLMProvider;
   retriever: Retriever;
   judge: Judge;
-  cases?: GoldenCase[];
+  /** The exam. Authored content now, so the caller always supplies it. */
+  cases: GoldenCase[];
+  /** The knowledge base, for resolving the judge's source text. */
+  articles: Article[];
 }
 
 /**
@@ -36,9 +39,7 @@ export interface EvalOptions {
  * it needs concurrency.
  */
 export async function* evaluateStream(opts: EvalOptions): AsyncGenerator<EvalRow> {
-  const cases = opts.cases ?? GOLDEN_CASES;
-
-  for (const gc of cases) {
+  for (const gc of opts.cases) {
     const trace = await runAgent({
       ticket: gc.ticket,
       prompt: opts.prompt,
@@ -46,7 +47,7 @@ export async function* evaluateStream(opts: EvalOptions): AsyncGenerator<EvalRow
       retriever: opts.retriever,
     });
 
-    const checks = await runChecks(trace, gc.expect, opts.judge);
+    const checks = await runChecks(trace, gc.expect, opts.judge, opts.articles);
     const passed = rowPassed(checks);
 
     yield {

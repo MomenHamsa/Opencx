@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { runAgent } from "@/lib/agent/run";
 import { createProvider, isProviderId } from "@/lib/llm/factory";
-import { getPromptVersion } from "@/lib/prompt/versions";
+import { findPrompt, loadWorkspace } from "@/lib/workspace/store";
 import { createKeywordRetriever } from "@/lib/retrieval/keyword";
 import type { Channel, Ticket } from "@/lib/types";
 
@@ -31,7 +31,8 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json({ error: "ticket body is required" }, { status: 400 });
   }
 
-  const prompt = getPromptVersion(typeof body.promptVersion === "string" ? body.promptVersion : "");
+  const workspace = await loadWorkspace();
+  const prompt = findPrompt(workspace, typeof body.promptVersion === "string" ? body.promptVersion : "");
   if (prompt === undefined) {
     return Response.json({ error: "unknown prompt version" }, { status: 400 });
   }
@@ -69,7 +70,7 @@ export async function POST(request: Request): Promise<Response> {
     ticket,
     prompt,
     provider,
-    retriever: createKeywordRetriever(),
+    retriever: createKeywordRetriever(workspace.articles),
   });
 
   return Response.json({ traceId: trace.traceId });

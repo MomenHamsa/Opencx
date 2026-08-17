@@ -1,7 +1,6 @@
 import { HANDOFF_CONFIDENCE, WEAK_RETRIEVAL_SCORE } from "@/lib/config";
 import type { Judge } from "@/lib/eval/judge";
-import { getArticle } from "@/lib/kb/articles";
-import type { CheckResult, Expectation, FailureCategory, Trace } from "@/lib/types";
+import type { Article, CheckResult, Expectation, FailureCategory, Trace } from "@/lib/types";
 
 /**
  * The seven checks.
@@ -19,6 +18,8 @@ export async function runChecks(
   trace: Trace,
   expect: Expectation,
   judge: Judge,
+  /** The workspace's articles, for resolving the judge's source text. */
+  articles: Article[],
 ): Promise<CheckResult[]> {
   const checks: CheckResult[] = [];
   const { output } = trace;
@@ -101,7 +102,7 @@ export async function runChecks(
   // would turn one mistake into two failures and make the score harder to read.
   {
     const sources = [
-      ...trace.retrieved.map((r) => getArticle(r.articleId)?.body ?? ""),
+      ...trace.retrieved.map((r) => articles.find((a) => a.id === r.articleId)?.body ?? ""),
       ...trace.toolCalls.map((c) => JSON.stringify(c.output)),
     ].join("\n\n");
 

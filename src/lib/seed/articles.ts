@@ -11,7 +11,7 @@ import type { Article } from "@/lib/types";
  *     or the roadmap. The escalation half of the exam depends on questions this KB
  *     genuinely cannot answer, so the agent's only honest move is to hand off.
  */
-export const ARTICLES: Article[] = [
+export const SEED_ARTICLES: Article[] = [
   {
     id: "kb-zendesk-connect",
     title: "Connecting Zendesk to OpenCX",
@@ -131,8 +131,3 @@ After the 5th failure the endpoint is **automatically disabled** and an email is
 Delivery history is kept for 7 days at Settings > Webhooks > Deliveries. You can filter to failed deliveries and replay them individually or in bulk from there. Anything older than 7 days is gone and must be backfilled through the REST API.`,
   },
 ];
-
-/** Lookup used by the trace UI and the citation check. */
-export function getArticle(id: string): Article | undefined {
-  return ARTICLES.find((a) => a.id === id);
-}

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { WEAK_RETRIEVAL_SCORE } from "@/lib/config";
-import { getCase } from "@/lib/golden/cases";
+import { findCase, loadWorkspace } from "@/lib/workspace/store";
 import { loadTrace } from "@/lib/trace/store";
 import type { Trace } from "@/lib/types";
 
@@ -28,7 +28,7 @@ export default async function TracePage({
   // The trace does not know what was expected of it — that lives in the golden set.
   // Joining them here is what lets the page say "the article that holds the answer
   // never made it into the retrieved set".
-  const expected = getCase(trace.ticket.id)?.expect;
+  const expected = findCase(await loadWorkspace(), trace.ticket.id)?.expect;
   const expectedArticles = expected?.citesAnyOf ?? [];
   const retrievedIds = trace.retrieved.map((r) => r.articleId);
   const missingExpected = expectedArticles.filter((id) => !retrievedIds.includes(id));

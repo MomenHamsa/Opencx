@@ -22,7 +22,9 @@ export interface Article {
 // Tickets
 // ---------------------------------------------------------------------------
 
-export type Channel = "email" | "chat" | "widget";
+/** A const array rather than a bare union: authoring forms need these at runtime. */
+export const CHANNELS = ["email", "chat", "widget"] as const;
+export type Channel = (typeof CHANNELS)[number];
 
 export interface Ticket {
   id: string;

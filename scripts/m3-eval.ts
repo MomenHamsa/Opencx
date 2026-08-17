@@ -9,7 +9,7 @@ import { evaluateStream, summarise } from "@/lib/eval/run";
 import { diffAgainstBaseline, loadBaseline, saveBaseline, saveRun } from "@/lib/eval/store";
 import { createProvider } from "@/lib/llm/factory";
 import { FEATURE_LABELS, detectPromptFeatures } from "@/lib/llm/prompt-features";
-import { getPromptVersion } from "@/lib/prompt/versions";
+import { findPrompt, loadWorkspace } from "@/lib/workspace/store";
 import { createKeywordRetriever } from "@/lib/retrieval/keyword";
 import type { EvalRow } from "@/lib/types";
 
@@ -23,7 +23,8 @@ async function main(): Promise<void> {
   // works instead of silently doing nothing, which is the worst way for a flag to fail.
   const promote = args.includes("--baseline") || process.env.npm_config_baseline === "true";
 
-  const prompt = getPromptVersion(promptId);
+  const workspace = await loadWorkspace();
+  const prompt = findPrompt(workspace, promptId);
   if (prompt === undefined) throw new Error(`unknown prompt version: ${promptId}`);
 
   // `--real` runs against the configured model instead of the mock. Needs a key, so
@@ -34,8 +35,10 @@ async function main(): Promise<void> {
   const opts = {
     prompt,
     provider,
-    retriever: createKeywordRetriever(),
+    retriever: createKeywordRetriever(workspace.articles),
     judge: createSpecificityJudge(),
+    cases: workspace.cases,
+    articles: workspace.articles,
   };
 
   // Which rules the prompt actually contains. Printed on every run because with the

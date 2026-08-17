@@ -1,4 +1,3 @@
-import { ARTICLES } from "@/lib/kb/articles";
 import { tokenize } from "@/lib/retrieval/tokenize";
 import type { Article, RetrievedArticle, Retriever } from "@/lib/types";
 
@@ -119,7 +118,9 @@ function scoreDoc(index: Index, doc: IndexedDoc, queryTerms: string[]): {
   return { score, matchedTerms };
 }
 
-export function createKeywordRetriever(articles: Article[] = ARTICLES): Retriever {
+// No default: the corpus is authored content now, so it always comes from the
+// workspace. A default here would quietly index stale sample data.
+export function createKeywordRetriever(articles: Article[]): Retriever {
   // Built once at construction. 8 articles, so this is microseconds; a real corpus
   // would build this offline, which is another reason `search` is async.
   const index = buildIndex(articles);

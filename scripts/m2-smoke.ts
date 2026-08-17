@@ -10,9 +10,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { runAgent } from "@/lib/agent/run";
 import { TRACES_DIR } from "@/lib/config";
-import { GOLDEN_CASES } from "@/lib/golden/cases";
 import { createMockProvider } from "@/lib/llm/mock";
-import { getPromptVersion } from "@/lib/prompt/versions";
+import { findPrompt, loadWorkspace } from "@/lib/workspace/store";
 import { createKeywordRetriever } from "@/lib/retrieval/keyword";
 import { createKeywordRetriever as makeRetriever } from "@/lib/retrieval/keyword";
 import type { LLMProvider, LLMRequest, LLMResponse, Trace } from "@/lib/types";
@@ -57,9 +56,11 @@ Hope that helps!`,
 }
 
 async function main(): Promise<void> {
-  const prompt = getPromptVersion("v1");
+  const workspace = await loadWorkspace();
+  const GOLDEN_CASES = workspace.cases;
+  const prompt = findPrompt(workspace, "v1");
   if (prompt === undefined) throw new Error("prompt v1 missing");
-  const retriever = createKeywordRetriever();
+  const retriever = createKeywordRetriever(workspace.articles);
   const ticket = GOLDEN_CASES[0]?.ticket;
   if (ticket === undefined) throw new Error("golden set is empty");
 
@@ -120,7 +121,7 @@ async function main(): Promise<void> {
         ticket,
         prompt,
         provider: createChaosProvider(mode),
-        retriever: makeRetriever(),
+        retriever: makeRetriever(workspace.articles),
       });
     } catch (err: unknown) {
       console.log(`  ${mode.padEnd(24)} THREW — ${err instanceof Error ? err.message : String(err)}`);

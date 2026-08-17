@@ -3,6 +3,7 @@ import { runEvaluation } from "@/lib/eval/run";
 import { latestRunForVersion, saveRun } from "@/lib/eval/store";
 import { createMockProvider } from "@/lib/llm/mock";
 import { createKeywordRetriever } from "@/lib/retrieval/keyword";
+import type { Workspace } from "@/lib/workspace/store";
 import type { EvalRun, PromptVersion } from "@/lib/types";
 
 /**
@@ -19,7 +20,10 @@ import type { EvalRun, PromptVersion } from "@/lib/types";
  * need to be a button instead, which is a note worth making out loud rather than a
  * problem to hide.
  */
-export async function runForVersion(prompt: PromptVersion): Promise<EvalRun> {
+export async function runForVersion(
+  prompt: PromptVersion,
+  workspace: Workspace,
+): Promise<EvalRun> {
   const saved = await latestRunForVersion(prompt.id);
 
   // Reuse only a mock run. A saved run from a real provider would quietly put a
@@ -32,8 +36,10 @@ export async function runForVersion(prompt: PromptVersion): Promise<EvalRun> {
     // Always the mock here. This screen compares *prompts*, so holding the provider
     // fixed is the only way the comparison means anything.
     provider: createMockProvider(),
-    retriever: createKeywordRetriever(),
+    retriever: createKeywordRetriever(workspace.articles),
     judge: createSpecificityJudge(),
+    cases: workspace.cases,
+    articles: workspace.articles,
   });
 
   await saveRun(run);

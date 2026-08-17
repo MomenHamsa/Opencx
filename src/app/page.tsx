@@ -1,7 +1,7 @@
 import { EvalScreen } from "@/components/eval/EvalScreen";
 import { loadBaseline } from "@/lib/eval/store";
 import { providerAvailability } from "@/lib/llm/factory";
-import { PROMPT_VERSIONS } from "@/lib/prompt/versions";
+import { loadWorkspace } from "@/lib/workspace/store";
 
 // Reads the baseline off disk on every request; there is nothing to prerender.
 export const dynamic = "force-dynamic";
@@ -11,7 +11,8 @@ export default async function Home() {
 
   // Only id and label cross to the client. The system prompts are several kilobytes
   // each and the browser has no use for them on this screen.
-  const prompts = PROMPT_VERSIONS.map((p) => ({ id: p.id, label: p.label }));
+  const workspace = await loadWorkspace();
+  const prompts = workspace.prompts.map((p) => ({ id: p.id, label: p.label }));
 
   // Read server-side: whether a key exists is not something the browser should be
   // guessing at, and the key itself never leaves this process.

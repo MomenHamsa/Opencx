@@ -11,4 +11,9 @@ next-env.d.ts
 data/traces/
 data/runs/
 
+# Authored content: your knowledge base, test cases and prompts. Deliberately not
+# committed — this is real work content, and the bundled samples in src/lib/seed/
+# reseed it automatically on a fresh checkout.
+data/config/
+
 .DS_Store

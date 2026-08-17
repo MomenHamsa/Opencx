@@ -39,3 +39,10 @@ export const DATA_DIR = path.join(process.cwd(), "data");
 export const TRACES_DIR = path.join(DATA_DIR, "traces");
 export const RUNS_DIR = path.join(DATA_DIR, "runs");
 export const BASELINE_FILE = path.join(DATA_DIR, "baseline.json");
+
+/**
+ * Authored content: knowledge base, test cases, prompts. Gitignored, because a real
+ * knowledge base and real customer tickets are not sample data and should never
+ * reach a public repository by way of `git add -A`.
+ */
+export const CONFIG_DIR = path.join(DATA_DIR, "config");

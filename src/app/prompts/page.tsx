@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Verdict } from "@/components/ui/badges";
 import { runForVersion } from "@/lib/eval/compare";
 import { FEATURE_LABELS, detectPromptFeatures, type PromptFeatures } from "@/lib/llm/prompt-features";
-import { PROMPT_VERSIONS } from "@/lib/prompt/versions";
+import { loadWorkspace } from "@/lib/workspace/store";
 import type { EvalRow, EvalRun, PromptVersion } from "@/lib/types";
 
 /**
@@ -18,12 +18,16 @@ import type { EvalRow, EvalRun, PromptVersion } from "@/lib/types";
 export const dynamic = "force-dynamic";
 
 export default async function PromptsPage() {
-  const [v1, v2] = [PROMPT_VERSIONS[0], PROMPT_VERSIONS[1]];
+  const workspace = await loadWorkspace();
+  const [v1, v2] = [workspace.prompts[0], workspace.prompts[1]];
   if (v1 === undefined || v2 === undefined) {
     return <main className="p-8 text-muted">Need at least two prompt versions to compare.</main>;
   }
 
-  const [runA, runB] = await Promise.all([runForVersion(v1), runForVersion(v2)]);
+  const [runA, runB] = await Promise.all([
+    runForVersion(v1, workspace),
+    runForVersion(v2, workspace),
+  ]);
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-8">
