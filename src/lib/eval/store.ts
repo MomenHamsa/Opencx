@@ -60,6 +60,34 @@ export async function latestRunForVersion(promptVersion: string): Promise<EvalRu
   return runs[0] ?? null;
 }
 
+/**
+ * How many saved runs exist per prompt version, in one directory scan.
+ *
+ * This is what makes a prompt version freezable: once a run has been graded
+ * against a prompt, editing that prompt in place would silently invalidate the
+ * score attached to it — and a baseline you can retroactively change is not a
+ * baseline.
+ */
+export async function runCountsByPrompt(): Promise<Record<string, number>> {
+  const counts: Record<string, number> = {};
+  let files: string[];
+  try {
+    files = (await fs.readdir(RUNS_DIR)).filter((f) => f.endsWith(".json"));
+  } catch {
+    return counts;
+  }
+
+  for (const file of files) {
+    try {
+      const run = JSON.parse(await fs.readFile(path.join(RUNS_DIR, file), "utf8")) as EvalRun;
+      counts[run.promptVersion] = (counts[run.promptVersion] ?? 0) + 1;
+    } catch {
+      // A half-written or hand-edited run file should not break the editor.
+    }
+  }
+  return counts;
+}
+
 export async function saveBaseline(run: EvalRun): Promise<void> {
   await fs.mkdir(path.dirname(BASELINE_FILE), { recursive: true });
   await fs.writeFile(BASELINE_FILE, JSON.stringify(run, null, 2), "utf8");

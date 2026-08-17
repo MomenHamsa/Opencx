@@ -7,9 +7,16 @@ export const metadata: Metadata = {
   description: "Trace recorder and evaluation harness for a support AI agent.",
 };
 
+/**
+ * Grouped by what you are doing: run the exam, author what it grades, inspect the
+ * result, or poke at a single ticket.
+ */
 const NAV = [
-  { href: "/", label: "eval run" },
-  { href: "/prompts", label: "prompt diff" },
+  { href: "/", label: "run" },
+  { href: "/prompts", label: "prompts" },
+  { href: "/tests", label: "tests" },
+  { href: "/kb", label: "knowledge base" },
+  { href: "/compare", label: "compare" },
   { href: "/playground", label: "playground" },
 ];
 
