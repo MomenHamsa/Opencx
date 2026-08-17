@@ -21,15 +21,23 @@ export function isProviderId(value: unknown): value is ProviderId {
   return typeof value === "string" && (PROVIDER_IDS as readonly string[]).includes(value);
 }
 
-export function createProvider(id: ProviderId): LLMProvider {
+/**
+ * `model` overrides the env default for one run, so two models can be compared on
+ * the same tests without an edit-and-restart cycle.
+ */
+export function createProvider(id: ProviderId, model?: string): LLMProvider {
+  const chosen = (model ?? "").trim();
+  const withModel = (p: LLMProvider): LLMProvider =>
+    chosen === "" || chosen === p.model ? p : { ...p, model: chosen };
+
   // Each of these throws a readable message when its key is missing. Failing loudly
   // beats silently falling back to the mock and letting someone believe they just
   // watched a real model run.
   switch (id) {
     case "openai":
-      return createOpenAIProvider();
+      return withModel(createOpenAIProvider(chosen));
     case "anthropic":
-      return createAnthropicProvider();
+      return withModel(createAnthropicProvider(chosen));
     default:
       return createMockProvider();
   }

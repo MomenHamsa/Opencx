@@ -39,7 +39,10 @@ export async function POST(request: Request): Promise<Response> {
 
   let provider;
   try {
-    provider = createProvider(isProviderId(body.provider) ? body.provider : "mock");
+    provider = createProvider(
+      isProviderId(body.provider) ? body.provider : "mock",
+      typeof body.model === "string" ? body.model : undefined,
+    );
   } catch (err: unknown) {
     return Response.json(
       { error: err instanceof Error ? err.message : "provider unavailable" },

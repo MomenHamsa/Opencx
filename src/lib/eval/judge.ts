@@ -1,3 +1,6 @@
+import { extractJsonObject } from "@/lib/agent/parse";
+import type { LLMProvider } from "@/lib/types";
+
 /**
  * The grounding judge.
  *
@@ -11,6 +14,13 @@ export interface GroundingVerdict {
   grounded: boolean;
   /** What was unsupported, specifically. Goes straight into the failed row. */
   reason: string;
+  /**
+   * The judge could not reach a verdict — it errored, or returned something
+   * unreadable. Distinct from `grounded: false` on purpose: "I could not check
+   * this" is not the same claim as "this is wrong", and reporting one as the other
+   * is how a flaky judge quietly becomes a fake failure.
+   */
+  unavailable?: boolean;
 }
 
 export interface Judge {
@@ -88,4 +98,94 @@ function numericTokens(text: string): string[] {
   }
 
   return [...tokens];
+}
+
+// ---------------------------------------------------------------------------
+// The model judge
+// ---------------------------------------------------------------------------
+
+const JUDGE_SYSTEM = `You are grading one support reply for grounding. This is the only question you answer.
+
+A reply is grounded when every factual claim it makes is supported by the evidence provided. Factual claims are things like prices, dates, timeframes, limits, policies, product behaviour, and statements about what did or will happen to this customer's account.
+
+The following are NOT ungrounded, and must not be penalised:
+- Greetings, apologies, and offers to help further.
+- Saying the question is being passed to a colleague or a specialist team.
+- Saying that the help centre does not cover something.
+- Restating the customer's own question back to them.
+
+Judge only what is written. Do not reward or punish tone, length, or formatting, and do not speculate about what the agent might have meant.
+
+Respond with JSON only, nothing before or after it:
+{"grounded": true|false, "reason": "<one sentence naming the specific unsupported claim, or confirming all claims are supported>"}`;
+
+/**
+ * A real model grading the grounding check.
+ *
+ * This is the check that cannot be pattern-matched — a fluent, confident,
+ * well-formatted claim that nothing in the evidence supports. The offline
+ * specificity judge catches invented *numbers*; it sails straight past "we are
+ * fully GDPR compliant and all of our sub-processors are in the EEA", which is the
+ * sentence that actually costs you a customer.
+ *
+ * Two honest caveats to keep in view:
+ *
+ *  - **Cost.** This is one extra model call per graded row, so a 50-test suite is
+ *    100 calls, not 50. It is a deliberate choice in the UI, not the default.
+ *  - **Self-preference.** Judging a model's output with the same model is a known
+ *    weakness — it tends to like its own work. Set JUDGE_MODEL to something
+ *    stronger than the agent's model when the verdict matters.
+ */
+export function createLLMJudge(provider: LLMProvider): Judge {
+  return {
+    name: `llm-judge:${provider.model}`,
+    async judgeGrounding(reply: string, sources: string): Promise<GroundingVerdict> {
+      const user = `<evidence>
+${sources.trim() === "" ? "(no evidence was retrieved for this ticket)" : sources}
+</evidence>
+
+<reply>
+${reply}
+</reply>`;
+
+      try {
+        const response = await provider.complete({
+          system: JUDGE_SYSTEM,
+          user,
+          temperature: 0,
+          maxTokens: 1000,
+        });
+
+        // The judge's own output is model output, so it gets the same distrust as
+        // the agent's: extract, then check the shape, never JSON.parse directly.
+        const parsed = extractJsonObject(response.text);
+        if (parsed === null || typeof parsed !== "object") {
+          return unavailable("judge returned output that could not be parsed");
+        }
+
+        const raw = parsed as Record<string, unknown>;
+        if (typeof raw.grounded !== "boolean") {
+          return unavailable("judge response had no boolean `grounded` field");
+        }
+
+        return {
+          grounded: raw.grounded,
+          reason: typeof raw.reason === "string" && raw.reason.trim() !== ""
+            ? raw.reason.trim()
+            : raw.grounded
+              ? "judged grounded"
+              : "judged ungrounded, no reason given",
+        };
+      } catch (err: unknown) {
+        // A rate limit or a network blip is not evidence the reply was wrong.
+        return unavailable(
+          `judge call failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+  };
+}
+
+function unavailable(reason: string): GroundingVerdict {
+  return { grounded: true, reason, unavailable: true };
 }

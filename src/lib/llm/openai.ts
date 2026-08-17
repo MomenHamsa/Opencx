@@ -45,12 +45,12 @@ function looksLikeReasoningModel(model: string): boolean {
   return /^o\d/i.test(model) || /^gpt-5/i.test(model);
 }
 
-export function createOpenAIProvider(): LLMProvider {
+export function createOpenAIProvider(modelOverride?: string): LLMProvider {
   if (!isOpenAIConfigured()) {
     throw new Error("OPENAI_API_KEY is not set. Add it to .env and restart.");
   }
 
-  const model = openAIModel();
+  const model = (modelOverride ?? "").trim() === "" ? openAIModel() : (modelOverride as string).trim();
   const client = new OpenAI(); // reads OPENAI_API_KEY from the environment
 
   return {

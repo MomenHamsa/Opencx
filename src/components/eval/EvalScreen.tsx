@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DiffPanel } from "@/components/eval/DiffPanel";
 import { ResultsTable } from "@/components/eval/ResultsTable";
 import { diffAgainstBaseline } from "@/lib/eval/diff";
 import type { ProviderOption } from "@/lib/llm/factory";
+import { formatTokens, formatUsd } from "@/lib/cost";
 import type { BaselineDiff, EvalRow, EvalRun } from "@/lib/types";
 
 /**
@@ -33,6 +34,9 @@ export function EvalScreen({
 }) {
   const [promptVersion, setPromptVersion] = useState(prompts[prompts.length - 1]?.id ?? "v1");
   const [providerId, setProviderId] = useState("mock");
+  const [model, setModel] = useState("");
+  const [useModelJudge, setUseModelJudge] = useState(false);
+  const [models, setModels] = useState<Record<string, string[]>>({});
   const [status, setStatus] = useState<Status>("idle");
   const [rows, setRows] = useState<EvalRow[]>([]);
   const [run, setRun] = useState<EvalRun | null>(null);
@@ -55,6 +59,8 @@ export function EvalScreen({
 
   function selectProvider(id: string): void {
     setProviderId(id);
+    setModel("");
+    if (id === "mock") setUseModelJudge(false);
     clearResults();
   }
 
@@ -65,6 +71,15 @@ export function EvalScreen({
     setError(null);
     setStatus("idle");
   }
+
+  // Asked once, so the model dropdown reflects what the key can actually reach
+  // rather than a list that goes stale. A failure costs the dropdown, not the run.
+  useEffect(() => {
+    void fetch("/api/models")
+      .then((r) => r.json())
+      .then((d: { models?: Record<string, string[]> }) => setModels(d.models ?? {}))
+      .catch(() => setModels({}));
+  }, []);
 
   async function runEvaluation(): Promise<void> {
     setStatus("running");
@@ -77,7 +92,12 @@ export function EvalScreen({
       const response = await fetch("/api/eval", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ promptVersion, provider: providerId }),
+        body: JSON.stringify({
+          promptVersion,
+          provider: providerId,
+          model: model === "" ? undefined : model,
+          judge: useModelJudge ? "model" : "heuristic",
+        }),
       });
 
       if (!response.ok || response.body === null) {
@@ -185,11 +205,45 @@ export function EvalScreen({
           </select>
         </Field>
 
+        {isLive && (models[providerId] ?? []).length > 0 && (
+          <Field label="model">
+            <select
+              value={model}
+              onChange={(e) => {
+                setModel(e.target.value);
+                clearResults();
+              }}
+              disabled={running}
+              className="max-w-[13rem] rounded border border-line bg-raised px-2 py-1 font-mono text-xs disabled:opacity-50"
+            >
+              <option value="">default</option>
+              {(models[providerId] ?? []).map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </select>
+          </Field>
+        )}
+
         {isLive && (
-          <span className="max-w-xs text-xs text-warn">
-            Live model: one API call per test, billed to your key, and slower than the
-            mock. Rows still stream in as they finish.
-          </span>
+          <Field label="grounding judge">
+            <label className="flex items-center gap-2 py-1 font-mono text-xs">
+              <input
+                type="checkbox"
+                checked={useModelJudge}
+                disabled={running}
+                onChange={(e) => {
+                  setUseModelJudge(e.target.checked);
+                  clearResults();
+                }}
+              />
+              {/* One extra call per row, so it is opt-in and says so. */}
+              <span className={useModelJudge ? "" : "text-muted"}>
+                {useModelJudge ? "model (2× calls)" : "heuristic (free)"}
+              </span>
+            </label>
+          </Field>
         )}
 
         <button
@@ -219,6 +273,17 @@ export function EvalScreen({
           <div className="font-mono text-[11px] text-muted">
             {run !== null ? `${run.provider}/${run.model}` : "not run yet"}
           </div>
+          {/* Tokens are reported by the provider and exact; the dollar figure is an
+              estimate from a local price table, so it is labelled as one. */}
+          {run?.usage !== undefined && (
+            <div className="font-mono text-[11px] text-muted">
+              {formatTokens(run.usage.promptTokens)} in ·{" "}
+              {formatTokens(run.usage.completionTokens)} out
+              {run.estimatedCostUsd !== null && run.estimatedCostUsd !== undefined && (
+                <> · est. {formatUsd(run.estimatedCostUsd)}</>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

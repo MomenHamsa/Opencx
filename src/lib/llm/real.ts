@@ -40,12 +40,12 @@ export function realProviderModel(): string {
   return configured === "" ? DEFAULT_MODEL : configured;
 }
 
-export function createAnthropicProvider(): LLMProvider {
+export function createAnthropicProvider(modelOverride?: string): LLMProvider {
   if (!isRealProviderConfigured()) {
     throw new Error("ANTHROPIC_API_KEY is not set. Copy .env.example to .env and add a key.");
   }
 
-  const model = realProviderModel();
+  const model = (modelOverride ?? "").trim() === "" ? realProviderModel() : (modelOverride as string).trim();
   const client = new Anthropic(); // reads ANTHROPIC_API_KEY from the environment
 
   return {

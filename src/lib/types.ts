@@ -269,6 +269,8 @@ export interface EvalRow {
   failureCategory: FailureCategory | null;
   degraded: boolean;
   latencyMs: number;
+  /** Optional so runs saved before cost tracking existed still load. */
+  usage?: TokenUsage;
 }
 
 export interface EvalRun {
@@ -280,6 +282,13 @@ export interface EvalRun {
   passed: number;
   total: number;
   rows: EvalRow[];
+  /** Totals across the run. Optional for the same backward-compatibility reason. */
+  usage?: TokenUsage;
+  /**
+   * Estimated, not billed — see `src/lib/cost.ts`. Null when the model is not in
+   * the price table, which is better than quoting a number I made up.
+   */
+  estimatedCostUsd?: number | null;
 }
 
 export interface BaselineDiff {

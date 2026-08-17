@@ -1,4 +1,4 @@
-import { createSpecificityJudge } from "@/lib/eval/judge";
+import { createLLMJudge, createSpecificityJudge } from "@/lib/eval/judge";
 import { evaluateStream, summarise } from "@/lib/eval/run";
 import { diffAgainstBaseline, loadBaseline, saveRun } from "@/lib/eval/store";
 import { createProvider, isProviderId } from "@/lib/llm/factory";
@@ -23,7 +23,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request): Promise<Response> {
-  let body: { promptVersion?: unknown; provider?: unknown };
+  let body: { promptVersion?: unknown; provider?: unknown; model?: unknown; judge?: unknown };
   try {
     body = (await request.json()) as typeof body;
   } catch {
@@ -46,9 +46,11 @@ export async function POST(request: Request): Promise<Response> {
 
   const providerId = isProviderId(body.provider) ? body.provider : "mock";
 
+  const model = typeof body.model === "string" ? body.model : undefined;
+
   let provider;
   try {
-    provider = createProvider(providerId);
+    provider = createProvider(providerId, model);
   } catch (err: unknown) {
     return Response.json(
       { error: err instanceof Error ? err.message : "provider unavailable" },
@@ -56,11 +58,22 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
+  // The model judge costs one extra call per graded row, so it is an explicit
+  // choice rather than a default. It falls back to the offline heuristic whenever
+  // the run has no live provider to ask.
+  function buildJudge() {
+    const wantsModelJudge = body.judge === "model" && providerId !== "mock";
+    if (!wantsModelJudge) return createSpecificityJudge();
+
+    const judgeModel = (process.env.JUDGE_MODEL ?? "").trim();
+    return createLLMJudge(createProvider(providerId, judgeModel === "" ? model : judgeModel));
+  }
+
   const opts = {
     prompt,
     provider,
     retriever: createKeywordRetriever(workspace.articles),
-    judge: createSpecificityJudge(),
+    judge: buildJudge(),
     cases: workspace.cases,
     articles: workspace.articles,
   };

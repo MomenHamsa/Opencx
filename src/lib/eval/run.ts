@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { estimateCostUsd, sumUsage } from "@/lib/cost";
 import { runAgent } from "@/lib/agent/run";
 import { categorise, rowPassed, runChecks } from "@/lib/eval/checks";
 import type { Judge } from "@/lib/eval/judge";
@@ -61,6 +62,7 @@ export async function* evaluateStream(opts: EvalOptions): AsyncGenerator<EvalRow
       failureCategory: passed ? null : categorise(trace, gc.expect, checks),
       degraded: trace.degraded,
       latencyMs: trace.latencyMs,
+      usage: trace.usage,
     };
   }
 }
@@ -69,6 +71,8 @@ export function summarise(
   rows: EvalRow[],
   meta: { prompt: PromptVersion; provider: LLMProvider },
 ): EvalRun {
+  const usage = sumUsage(rows.map((r) => r.usage));
+
   return {
     runId: `run_${meta.prompt.id}_${randomUUID().slice(0, 6)}`,
     createdAt: new Date().toISOString(),
@@ -78,6 +82,8 @@ export function summarise(
     passed: rows.filter((r) => r.passed).length,
     total: rows.length,
     rows,
+    usage,
+    estimatedCostUsd: estimateCostUsd(meta.provider.model, usage),
   };
 }
 

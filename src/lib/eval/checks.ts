@@ -107,12 +107,17 @@ export async function runChecks(
     ].join("\n\n");
 
     const verdict = await judge.judgeGrounding(output.reply, sources);
+
+    // A judge that could not reach a verdict marks the check skipped, not passed
+    // and not failed. Counting a rate-limited judge as a grounding failure would
+    // invent a regression; counting it as a pass would hide a real one. "We did
+    // not check this" is the only honest third answer, and the row shows it.
     checks.push({
       name: "grounded",
       passed: verdict.grounded,
       detail: verdict.reason,
       diagnostic: false,
-      skipped: false,
+      skipped: verdict.unavailable === true,
     });
   }
 
