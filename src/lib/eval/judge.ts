@@ -52,17 +52,22 @@ export function createSpecificityJudge(): Judge {
     name: "mock-specificity",
     async judgeGrounding(reply: string, sources: string): Promise<GroundingVerdict> {
       const claimed = numericTokens(reply);
-      if (claimed.length === 0) {
+      if (claimed.size === 0) {
         return { grounded: true, reason: "no numeric claims to check" };
       }
 
-      const supported = new Set(numericTokens(sources));
-      const invented = claimed.filter((t) => !supported.has(t));
+      // Compare on the canonical form only. Comparing raw forms too would report
+      // "80,000" as invented even when the source says "80k" — the same number,
+      // and the exact false positive a real run surfaced.
+      const supported = numericTokens(sources);
+      const invented = [...claimed.entries()]
+        .filter(([canonical]) => !supported.has(canonical))
+        .map(([, original]) => original);
 
       if (invented.length === 0) {
         return {
           grounded: true,
-          reason: `all ${claimed.length} numeric claims appear in the cited sources`,
+          reason: `all ${claimed.size} numeric claims appear in the cited sources`,
         };
       }
 
@@ -75,29 +80,51 @@ export function createSpecificityJudge(): Judge {
 }
 
 /**
- * Numbers, percentages, money, dates and quarters, as whole tokens.
+ * Numeric claims in the text, as a map from canonical form to the original spelling.
  *
- * Whole tokens rather than substrings on purpose: matching "5" inside "2025" would
- * mark almost anything as supported, and a judge that never fails is not a check,
- * it is decoration.
+ * Canonical so that "80k", "80,000" and "80000" compare equal; original so the
+ * failure message quotes what was actually written. Whole tokens rather than
+ * substrings, because matching "5" inside "2025" would mark almost anything as
+ * supported, and a judge that never fails is decoration rather than a check.
  */
-function numericTokens(text: string): string[] {
-  const tokens = new Set<string>();
+function numericTokens(text: string): Map<string, string> {
+  const tokens = new Map<string, string>();
+  const add = (canonical: string, original: string): void => {
+    if (!tokens.has(canonical)) tokens.set(canonical, original);
+  };
 
-  // 24, 0.6, 14,400.00, 08:14:00, 2026-02-09, 20%, 2xx
+  // 24, 0.6, 14,400.00, 08:14:00, 2026-02-09, 20%, 2xx, 80k
   // The lookbehind keeps "Q3" from also registering a bare "3", which made the
   // failure message read `states "3", "4", "q3", "q4"` for a single invented quarter.
-  for (const m of text.matchAll(/(?<![Qq])\d[\d,.:x-]*%?/gi)) {
+  for (const m of text.matchAll(/(?<![Qq])\d[\d,.:x-]*%?k?\b/gi)) {
     const token = m[0].replace(/[.,:-]+$/, "");
-    if (token !== "") tokens.add(token.toLowerCase());
+    if (token === "") continue;
+    add(normaliseNumber(token) ?? token.toLowerCase(), token);
   }
 
   // Q3, Q4 — a roadmap date with no digit-run of its own.
   for (const m of text.matchAll(/\bQ[1-4]\b/gi)) {
-    tokens.add(m[0].toLowerCase());
+    add(m[0].toLowerCase(), m[0]);
   }
 
-  return [...tokens];
+  return tokens;
+}
+
+/**
+ * "80,000" and "80k" to a single canonical "80000".
+ *
+ * Patching around formatting like this is exactly the argument for the model judge:
+ * every fix here is one more special case, and the next one will be "eighty
+ * thousand" spelled out, which no regex is going to catch.
+ */
+function normaliseNumber(token: string): string | null {
+  const match = /^(\d[\d,]*(?:\.\d+)?)(k?)$/i.exec(token);
+  if (match === null) return null;
+
+  const value = Number(match[1]?.replace(/,/g, "") ?? "");
+  if (Number.isNaN(value)) return null;
+
+  return String(match[2]?.toLowerCase() === "k" ? value * 1000 : value);
 }
 
 // ---------------------------------------------------------------------------

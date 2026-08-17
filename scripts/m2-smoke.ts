@@ -1,3 +1,7 @@
+import { loadEnvFile } from "./_env";
+
+loadEnvFile();
+
 /**
  * Milestone 2 smoke check: `npm run m2`.
  *

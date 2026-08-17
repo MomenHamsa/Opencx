@@ -292,6 +292,14 @@ export interface EvalRun {
 }
 
 export interface BaselineDiff {
+  /**
+   * False when the baseline used a different provider or model. The fixed/regressed
+   * lists are still computed, but they no longer isolate the prompt — two variables
+   * moved, and the UI says so rather than letting the number imply otherwise.
+   */
+  comparable: boolean;
+  baselineProvider: string;
+  currentProvider: string;
   baselineRunId: string;
   baselinePromptVersion: string;
   baselinePassed: number;

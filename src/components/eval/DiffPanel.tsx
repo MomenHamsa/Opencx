@@ -49,6 +49,15 @@ export function DiffPanel({
         )}
       </div>
 
+      {!diff.comparable && (
+        <div className="mt-2 rounded border border-warn/50 bg-warn/10 px-3 py-2 text-xs text-warn">
+          The baseline ran on <span className="font-mono">{diff.baselineProvider}</span> and this
+          run on <span className="font-mono">{diff.currentProvider}</span>. Two things changed, so
+          fixed and regressed below do not isolate the prompt. Re-baseline on the same model to
+          compare prompts.
+        </div>
+      )}
+
       <div className="mt-2 flex flex-col gap-1">
         <DiffLine label="Fixed" ids={diff.fixed} tone="text-pass" />
         <DiffLine label="Regressed" ids={diff.regressed} tone="text-fail" />

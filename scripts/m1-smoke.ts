@@ -1,3 +1,7 @@
+import { loadEnvFile } from "./_env";
+
+loadEnvFile();
+
 /**
  * Milestone 1 smoke check. Not a test framework — the eval suite is the test suite.
  *

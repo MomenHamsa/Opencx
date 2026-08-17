@@ -1,3 +1,7 @@
+import { loadEnvFile } from "./_env";
+
+loadEnvFile();
+
 /**
  * Milestone 3: run the exam. `npm run m3 [promptVersion] [--baseline]`
  *
@@ -27,10 +31,9 @@ async function main(): Promise<void> {
   const prompt = findPrompt(workspace, promptId);
   if (prompt === undefined) throw new Error(`unknown prompt version: ${promptId}`);
 
-  // `--openai` / `--anthropic` run against a live model instead of the mock. Both
-  // need a key, so invoke as:
-  //   npm run m3 -- v2 --openai --env-file=.env
-  // (Next loads .env by itself; a bare tsx script does not.)
+  // `--openai` / `--anthropic` run against a live model instead of the mock.
+  // Keys come from .env, loaded by scripts/_env.ts at the top of this file.
+  //   npm run m3 -- v2 --openai
   const providerId = args.includes("--openai")
     ? "openai"
     : args.includes("--anthropic")

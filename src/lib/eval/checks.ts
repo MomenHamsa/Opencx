@@ -101,7 +101,19 @@ export async function runChecks(
   // cite. Citation discipline is already check 4; making the judge punish it again
   // would turn one mistake into two failures and make the score harder to read.
   {
+    // The ticket counts as evidence, and leaving it out was a bug.
+    //
+    // Found by running against a real model: gpt-4o-mini wrote "your 80,000 tickets"
+    // and "the 900 missing events", quoting figures the customer had supplied. The
+    // judge saw numbers absent from the articles and called them invented. Repeating
+    // what the customer told you is the opposite of making something up.
+    //
+    // Note what this does *not* license: the ticket is evidence of what the customer
+    // said, not evidence that it is true. An agent that accepts a customer's wrong
+    // claim about policy is caught by `citation` and `forbidden_content`, which is
+    // where that belongs.
     const sources = [
+      `${trace.ticket.subject}\n${trace.ticket.body}`,
       ...trace.retrieved.map((r) => articles.find((a) => a.id === r.articleId)?.body ?? ""),
       ...trace.toolCalls.map((c) => JSON.stringify(c.output)),
     ].join("\n\n");

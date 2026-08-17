@@ -310,7 +310,7 @@ npm run dev
 Defaults to `claude-opus-5`; override with `LLM_MODEL`. From the terminal:
 
 ```bash
-npm run m3 -- v2 --real --env-file=.env
+npm run m3 -- v2 --openai
 ```
 
 (Next.js loads `.env` on its own; a bare `tsx` script does not, hence the flag.)

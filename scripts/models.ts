@@ -1,7 +1,11 @@
+import { loadEnvFile } from "./_env";
+
+loadEnvFile();
+
 /**
  * Ask each configured key what models it can actually reach.
  *
- *   npm run models -- --env-file=.env
+ *   npm run models
  *
  * Exists because hardcoded model lists go stale and this does not. Also doubles as
  * the cheapest possible connectivity test: it either prints models or tells you
