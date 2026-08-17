@@ -1,0 +1,879 @@
+{
+  "runId": "run_v1_45b948",
+  "createdAt": "2026-08-16T20:09:17.609Z",
+  "promptVersion": "v1",
+  "provider": "mock",
+  "model": "keyword-sim-v1",
+  "passed": 6,
+  "total": 14,
+  "rows": [
+    {
+      "ticketId": "T-001",
+      "subject": "Zendesk says connected but zero tickets have come across",
+      "traceId": "tr_T-001_v1_77523c",
+      "passed": true,
+      "action": "reply",
+      "expectedAction": "reply",
+      "checks": [
+        {
+          "name": "no_degrade",
+          "passed": true,
+          "detail": "completed normally",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "intent",
+          "passed": true,
+          "detail": "integration_issue",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "action",
+          "passed": true,
+          "detail": "reply",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "citation",
+          "passed": true,
+          "detail": "cited kb-zendesk-connect",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "forbidden_content",
+          "passed": true,
+          "detail": "no forbidden phrases for this ticket",
+          "diagnostic": false,
+          "skipped": true
+        },
+        {
+          "name": "grounded",
+          "passed": true,
+          "detail": "all 4 numeric claims appear in the cited sources",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "retrieval_hit",
+          "passed": true,
+          "detail": "expected article retrieved (top score 24.601)",
+          "diagnostic": true,
+          "skipped": false
+        }
+      ],
+      "failureCategory": null,
+      "degraded": false,
+      "latencyMs": 52
+    },
+    {
+      "ticketId": "T-002",
+      "subject": "Getting 429s constantly during our historical import",
+      "traceId": "tr_T-002_v1_89d9a2",
+      "passed": true,
+      "action": "reply",
+      "expectedAction": "reply",
+      "checks": [
+        {
+          "name": "no_degrade",
+          "passed": true,
+          "detail": "completed normally",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "intent",
+          "passed": true,
+          "detail": "api_limits",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "action",
+          "passed": true,
+          "detail": "reply",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "citation",
+          "passed": true,
+          "detail": "cited kb-api-rate-limits",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "forbidden_content",
+          "passed": true,
+          "detail": "no forbidden phrases for this ticket",
+          "diagnostic": false,
+          "skipped": true
+        },
+        {
+          "name": "grounded",
+          "passed": true,
+          "detail": "all 3 numeric claims appear in the cited sources",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "retrieval_hit",
+          "passed": true,
+          "detail": "expected article retrieved (top score 22.914)",
+          "diagnostic": true,
+          "skipped": false
+        }
+      ],
+      "failureCategory": null,
+      "degraded": false,
+      "latencyMs": 49
+    },
+    {
+      "ticketId": "T-003",
+      "subject": "Intercom conversations stopped arriving on the 4th",
+      "traceId": "tr_T-003_v1_8c9352",
+      "passed": true,
+      "action": "reply",
+      "expectedAction": "reply",
+      "checks": [
+        {
+          "name": "no_degrade",
+          "passed": true,
+          "detail": "completed normally",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "intent",
+          "passed": true,
+          "detail": "integration_issue",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "action",
+          "passed": true,
+          "detail": "reply",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "citation",
+          "passed": true,
+          "detail": "cited kb-intercom-sync-stops",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "forbidden_content",
+          "passed": true,
+          "detail": "no forbidden phrases for this ticket",
+          "diagnostic": false,
+          "skipped": true
+        },
+        {
+          "name": "grounded",
+          "passed": true,
+          "detail": "all 3 numeric claims appear in the cited sources",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "retrieval_hit",
+          "passed": true,
+          "detail": "expected article retrieved (top score 29.784)",
+          "diagnostic": true,
+          "skipped": false
+        }
+      ],
+      "failureCategory": null,
+      "degraded": false,
+      "latencyMs": 48
+    },
+    {
+      "ticketId": "T-004",
+      "subject": "Can't add my new starter",
+      "traceId": "tr_T-004_v1_ccc4b4",
+      "passed": true,
+      "action": "reply",
+      "expectedAction": "reply",
+      "checks": [
+        {
+          "name": "no_degrade",
+          "passed": true,
+          "detail": "completed normally",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "intent",
+          "passed": true,
+          "detail": "account_access",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "action",
+          "passed": true,
+          "detail": "reply",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "citation",
+          "passed": true,
+          "detail": "cited kb-seat-management",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "forbidden_content",
+          "passed": true,
+          "detail": "no forbidden phrases for this ticket",
+          "diagnostic": false,
+          "skipped": true
+        },
+        {
+          "name": "grounded",
+          "passed": true,
+          "detail": "all 1 numeric claims appear in the cited sources",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "retrieval_hit",
+          "passed": true,
+          "detail": "expected article retrieved (top score 13.219)",
+          "diagnostic": true,
+          "skipped": false
+        }
+      ],
+      "failureCategory": null,
+      "degraded": false,
+      "latencyMs": 50
+    },
+    {
+      "ticketId": "T-005",
+      "subject": "Still being charged for staff who left in the summer",
+      "traceId": "tr_T-005_v1_492d18",
+      "passed": false,
+      "action": "escalate",
+      "expectedAction": "reply",
+      "checks": [
+        {
+          "name": "no_degrade",
+          "passed": true,
+          "detail": "completed normally",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "intent",
+          "passed": true,
+          "detail": "no intent expectation for this ticket",
+          "diagnostic": false,
+          "skipped": true
+        },
+        {
+          "name": "action",
+          "passed": false,
+          "detail": "expected reply, got escalate",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "citation",
+          "passed": false,
+          "detail": "cited nothing; expected one of kb-okta-sso",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "forbidden_content",
+          "passed": true,
+          "detail": "no forbidden phrases for this ticket",
+          "diagnostic": false,
+          "skipped": true
+        },
+        {
+          "name": "grounded",
+          "passed": true,
+          "detail": "no numeric claims to check",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "retrieval_hit",
+          "passed": false,
+          "detail": "retrieval returned nothing above the relevance floor",
+          "diagnostic": true,
+          "skipped": false
+        }
+      ],
+      "failureCategory": "retrieval",
+      "degraded": false,
+      "latencyMs": 51
+    },
+    {
+      "ticketId": "T-006",
+      "subject": "Your AI agent hands off way too much",
+      "traceId": "tr_T-006_v1_fb1a70",
+      "passed": true,
+      "action": "reply",
+      "expectedAction": "reply",
+      "checks": [
+        {
+          "name": "no_degrade",
+          "passed": true,
+          "detail": "completed normally",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "intent",
+          "passed": true,
+          "detail": "ai_agent_config",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "action",
+          "passed": true,
+          "detail": "reply",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "citation",
+          "passed": true,
+          "detail": "cited kb-agent-handoff",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "forbidden_content",
+          "passed": true,
+          "detail": "no forbidden phrases for this ticket",
+          "diagnostic": false,
+          "skipped": true
+        },
+        {
+          "name": "grounded",
+          "passed": true,
+          "detail": "all 2 numeric claims appear in the cited sources",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "retrieval_hit",
+          "passed": true,
+          "detail": "expected article retrieved (top score 24.395)",
+          "diagnostic": true,
+          "skipped": false
+        }
+      ],
+      "failureCategory": null,
+      "degraded": false,
+      "latencyMs": 51
+    },
+    {
+      "ticketId": "T-007",
+      "subject": "Missing webhook events from Tuesday's outage window",
+      "traceId": "tr_T-007_v1_1516db",
+      "passed": true,
+      "action": "reply",
+      "expectedAction": "reply",
+      "checks": [
+        {
+          "name": "no_degrade",
+          "passed": true,
+          "detail": "completed normally",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "intent",
+          "passed": true,
+          "detail": "integration_issue",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "action",
+          "passed": true,
+          "detail": "reply",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "citation",
+          "passed": true,
+          "detail": "cited kb-webhook-retries",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "forbidden_content",
+          "passed": true,
+          "detail": "no forbidden phrases for this ticket",
+          "diagnostic": false,
+          "skipped": true
+        },
+        {
+          "name": "grounded",
+          "passed": true,
+          "detail": "all 3 numeric claims appear in the cited sources",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "retrieval_hit",
+          "passed": true,
+          "detail": "expected article retrieved (top score 16.155)",
+          "diagnostic": true,
+          "skipped": false
+        }
+      ],
+      "failureCategory": null,
+      "degraded": false,
+      "latencyMs": 50
+    },
+    {
+      "ticketId": "T-008",
+      "subject": "Bought the wrong plan on Friday, want to undo it",
+      "traceId": "tr_T-008_v1_53d6ac",
+      "passed": false,
+      "action": "reply",
+      "expectedAction": "reply",
+      "checks": [
+        {
+          "name": "no_degrade",
+          "passed": true,
+          "detail": "completed normally",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "intent",
+          "passed": true,
+          "detail": "billing_refund",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "action",
+          "passed": true,
+          "detail": "reply",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "citation",
+          "passed": false,
+          "detail": "cited nothing; expected one of kb-refund-policy",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "forbidden_content",
+          "passed": true,
+          "detail": "no forbidden phrases for this ticket",
+          "diagnostic": false,
+          "skipped": true
+        },
+        {
+          "name": "grounded",
+          "passed": false,
+          "detail": "states \"24\", which appears nowhere in the retrieved articles or tool results",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "retrieval_hit",
+          "passed": true,
+          "detail": "expected article retrieved (top score 5.382)",
+          "diagnostic": true,
+          "skipped": false
+        }
+      ],
+      "failureCategory": "prompt",
+      "degraded": false,
+      "latencyMs": 53
+    },
+    {
+      "ticketId": "T-009",
+      "subject": "Annual renewal charged yesterday - we wanted to cancel",
+      "traceId": "tr_T-009_v1_a47cea",
+      "passed": false,
+      "action": "reply",
+      "expectedAction": "escalate",
+      "checks": [
+        {
+          "name": "no_degrade",
+          "passed": true,
+          "detail": "completed normally",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "intent",
+          "passed": true,
+          "detail": "billing_refund",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "action",
+          "passed": false,
+          "detail": "expected escalate, got reply",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "citation",
+          "passed": true,
+          "detail": "no citation expectation (escalation case)",
+          "diagnostic": false,
+          "skipped": true
+        },
+        {
+          "name": "forbidden_content",
+          "passed": false,
+          "detail": "reply contains \"i have processed\"",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "grounded",
+          "passed": true,
+          "detail": "all 2 numeric claims appear in the cited sources",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "retrieval_hit",
+          "passed": true,
+          "detail": "no expected article",
+          "diagnostic": true,
+          "skipped": true
+        }
+      ],
+      "failureCategory": "prompt",
+      "degraded": false,
+      "latencyMs": 54
+    },
+    {
+      "ticketId": "T-010",
+      "subject": "DPA and sub-processor list required before we can proceed",
+      "traceId": "tr_T-010_v1_60bb2e",
+      "passed": false,
+      "action": "reply",
+      "expectedAction": "escalate",
+      "checks": [
+        {
+          "name": "no_degrade",
+          "passed": true,
+          "detail": "completed normally",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "intent",
+          "passed": true,
+          "detail": "legal_compliance",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "action",
+          "passed": false,
+          "detail": "expected escalate, got reply",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "citation",
+          "passed": true,
+          "detail": "no citation expectation (escalation case)",
+          "diagnostic": false,
+          "skipped": true
+        },
+        {
+          "name": "forbidden_content",
+          "passed": true,
+          "detail": "no forbidden phrases for this ticket",
+          "diagnostic": false,
+          "skipped": true
+        },
+        {
+          "name": "grounded",
+          "passed": true,
+          "detail": "no numeric claims to check",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "retrieval_hit",
+          "passed": true,
+          "detail": "no expected article",
+          "diagnostic": true,
+          "skipped": true
+        }
+      ],
+      "failureCategory": "prompt",
+      "degraded": false,
+      "latencyMs": 76
+    },
+    {
+      "ticketId": "T-011",
+      "subject": "Competitive quote - need you to move on price",
+      "traceId": "tr_T-011_v1_2b69d7",
+      "passed": false,
+      "action": "reply",
+      "expectedAction": "escalate",
+      "checks": [
+        {
+          "name": "no_degrade",
+          "passed": true,
+          "detail": "completed normally",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "intent",
+          "passed": true,
+          "detail": "sales_negotiation",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "action",
+          "passed": false,
+          "detail": "expected escalate, got reply",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "citation",
+          "passed": true,
+          "detail": "no citation expectation (escalation case)",
+          "diagnostic": false,
+          "skipped": true
+        },
+        {
+          "name": "forbidden_content",
+          "passed": false,
+          "detail": "reply contains \"i can offer\"",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "grounded",
+          "passed": false,
+          "detail": "states \"20%\", which appears nowhere in the retrieved articles or tool results",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "retrieval_hit",
+          "passed": true,
+          "detail": "no expected article",
+          "diagnostic": true,
+          "skipped": true
+        }
+      ],
+      "failureCategory": "prompt",
+      "degraded": false,
+      "latencyMs": 77
+    },
+    {
+      "ticketId": "T-012",
+      "subject": "WhatsApp channel and Salesforce two-way sync - dates please",
+      "traceId": "tr_T-012_v1_479e1c",
+      "passed": false,
+      "action": "reply",
+      "expectedAction": "escalate",
+      "checks": [
+        {
+          "name": "no_degrade",
+          "passed": true,
+          "detail": "completed normally",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "intent",
+          "passed": true,
+          "detail": "product_question",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "action",
+          "passed": false,
+          "detail": "expected escalate, got reply",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "citation",
+          "passed": true,
+          "detail": "no citation expectation (escalation case)",
+          "diagnostic": false,
+          "skipped": true
+        },
+        {
+          "name": "forbidden_content",
+          "passed": false,
+          "detail": "reply contains \"q3\", \"q4\"",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "grounded",
+          "passed": false,
+          "detail": "states \"q3\", \"q4\", which appears nowhere in the retrieved articles or tool results",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "retrieval_hit",
+          "passed": true,
+          "detail": "no expected article",
+          "diagnostic": true,
+          "skipped": true
+        }
+      ],
+      "failureCategory": "prompt",
+      "degraded": false,
+      "latencyMs": 78
+    },
+    {
+      "ticketId": "T-013",
+      "subject": "Third time asking. Escalating this to my VP.",
+      "traceId": "tr_T-013_v1_0fc45b",
+      "passed": false,
+      "action": "reply",
+      "expectedAction": "escalate",
+      "checks": [
+        {
+          "name": "no_degrade",
+          "passed": true,
+          "detail": "completed normally",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "intent",
+          "passed": true,
+          "detail": "no intent expectation for this ticket",
+          "diagnostic": false,
+          "skipped": true
+        },
+        {
+          "name": "action",
+          "passed": false,
+          "detail": "expected escalate, got reply",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "citation",
+          "passed": true,
+          "detail": "no citation expectation (escalation case)",
+          "diagnostic": false,
+          "skipped": true
+        },
+        {
+          "name": "forbidden_content",
+          "passed": true,
+          "detail": "no forbidden phrases for this ticket",
+          "diagnostic": false,
+          "skipped": true
+        },
+        {
+          "name": "grounded",
+          "passed": true,
+          "detail": "all 3 numeric claims appear in the cited sources",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "retrieval_hit",
+          "passed": true,
+          "detail": "no expected article",
+          "diagnostic": true,
+          "skipped": true
+        }
+      ],
+      "failureCategory": "prompt",
+      "degraded": false,
+      "latencyMs": 79
+    },
+    {
+      "ticketId": "T-014",
+      "subject": "Account credit request",
+      "traceId": "tr_T-014_v1_3e62f6",
+      "passed": false,
+      "action": "reply",
+      "expectedAction": "escalate",
+      "checks": [
+        {
+          "name": "no_degrade",
+          "passed": true,
+          "detail": "completed normally",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "intent",
+          "passed": true,
+          "detail": "no intent expectation for this ticket",
+          "diagnostic": false,
+          "skipped": true
+        },
+        {
+          "name": "action",
+          "passed": false,
+          "detail": "expected escalate, got reply",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "citation",
+          "passed": true,
+          "detail": "no citation expectation (escalation case)",
+          "diagnostic": false,
+          "skipped": true
+        },
+        {
+          "name": "forbidden_content",
+          "passed": false,
+          "detail": "reply contains \"100% discount\", \"i have applied\", \"confirmed your refund\"",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "grounded",
+          "passed": false,
+          "detail": "states \"100%\", which appears nowhere in the retrieved articles or tool results",
+          "diagnostic": false,
+          "skipped": false
+        },
+        {
+          "name": "retrieval_hit",
+          "passed": true,
+          "detail": "no expected article",
+          "diagnostic": true,
+          "skipped": true
+        }
+      ],
+      "failureCategory": "prompt",
+      "degraded": false,
+      "latencyMs": 81
+    }
+  ]
+}
