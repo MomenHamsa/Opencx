@@ -1,0 +1,53 @@
+name: eval
+
+# The eval suite is the test suite, so this is the test job.
+#
+# It gates on regressions, not on the absolute score. The score moves for
+# legitimate reasons — you add tests — but a ticket that used to pass and now
+# fails is never fine, and that is what should block a merge.
+#
+# Runs entirely on the mock provider: no API key in CI, no spend per push, and a
+# deterministic result. Judging prompt changes against a real model belongs in a
+# scheduled job with its own key, not on every commit.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+      - name: Agent survives hostile model output
+        run: npm run m2
+
+      - name: Evaluate v1 against the committed baseline
+        run: npm run m3 -- v1 --fail-on-regression
+
+      - name: Evaluate v2 against the committed baseline
+        run: npm run m3 -- v2 --fail-on-regression
+
+      - name: Upload traces for debugging a failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: traces
+          path: data/traces/
+          retention-days: 7
+          if-no-files-found: ignore

@@ -1,0 +1,26 @@
+# Replit configuration.
+#
+# deploymentTarget is "gce" (Reserved VM) on purpose, and this is the one setting
+# that must not be changed to Autoscale. Autoscale instances have an ephemeral
+# filesystem and can be replaced between requests — this app writes its knowledge
+# base, tests, prompts, traces and baseline to disk under data/, so on Autoscale
+# your workspace would silently reset. A Reserved VM keeps the disk.
+
+run = "npm run dev"
+entrypoint = "src/app/page.tsx"
+modules = ["nodejs-20"]
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+deploymentTarget = "gce"
+build = ["sh", "-c", "npm ci && npm run build"]
+run = ["sh", "-c", "npm run start"]
+
+[[ports]]
+localPort = 3000
+externalPort = 80
+
+[env]
+NODE_ENV = "development"

@@ -333,6 +333,47 @@ Two details worth knowing, both visible in `src/lib/llm/real.ts`:
 A real run is 14 live API calls, billed to your key, and slower than the mock — which
 is exactly why results stream in row by row.
 
+## Deploying to Replit
+
+GitHub holds the code and runs the tests; Replit runs the app. **GitHub Pages cannot
+host this** — it serves static files only, and this app needs a Node server, a
+writable filesystem, and a place to keep an API key that is not the browser.
+
+1. **Import the repo.** Replit → Create → Import from GitHub → this repository.
+
+2. **Set Secrets** (the padlock in the sidebar, not a file):
+
+   | Secret | Why |
+   |---|---|
+   | `APP_PASSWORD` | Required. Without it the deployed app is open to anyone with the URL, and it holds a key that spends money. |
+   | `OPENAI_API_KEY` | Only if you want live models. |
+   | `OPENAI_MODEL` | Optional, defaults to `gpt-4o-mini`. |
+
+3. **Deploy as a Reserved VM — not Autoscale.** This is the one setting that must
+   not be changed. Autoscale instances have an ephemeral filesystem and can be
+   replaced between requests; this app writes your knowledge base, tests, prompts,
+   traces and baseline to disk under `data/`. On Autoscale your workspace would
+   silently reset. `.replit` already sets `deploymentTarget = "gce"`.
+
+4. **Open it.** The browser asks for a password — any username, `APP_PASSWORD` as the
+   password. The workspace seeds itself from the bundled samples on first load.
+
+### Backing up your work
+
+Your authored content lives in `data/config/*.json` on the VM's disk and is
+deliberately gitignored, so it is not in the repo. If it matters, download those
+three files periodically — that is the whole backup.
+
+### CI
+
+`.github/workflows/eval.yml` runs on every push: typecheck, build, the hostile-output
+suite, and both prompt versions against the committed baseline. It gates on
+**regressions, not the absolute score** — the score moves for legitimate reasons like
+adding tests, but a ticket that used to pass and now fails is never fine.
+
+It runs entirely on the mock, so there is no key in CI and no spend per push. Judging
+against a real model belongs in a scheduled job with its own key.
+
 ## Configuration
 
 The knobs that change behaviour live in one file, `src/lib/config.ts`:

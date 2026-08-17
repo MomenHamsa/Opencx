@@ -112,6 +112,30 @@ async function main(): Promise<void> {
     await saveBaseline(run);
     console.log(`baseline set to ${run.runId} (${run.passed}/${run.total})\n`);
   }
+
+  // The CI gate. Deliberately keyed on regressions rather than the absolute score:
+  // the score moves for legitimate reasons — you add tests — but a ticket that used
+  // to pass and now fails is never fine, and is the thing worth blocking a merge on.
+  if (args.includes("--fail-on-regression")) {
+    if (baseline === null) {
+      console.error("--fail-on-regression needs a saved baseline to compare against.\n");
+      process.exit(1);
+    }
+    const diff = diffAgainstBaseline(run, baseline);
+
+    if (!diff.comparable) {
+      console.error(
+        `REFUSING TO JUDGE: baseline ran on ${diff.baselineProvider}, this run on ${diff.currentProvider}.\n` +
+          "Two variables moved, so a regression here would not mean the prompt caused it.\n",
+      );
+      process.exit(1);
+    }
+    if (diff.regressed.length > 0) {
+      console.error(`REGRESSED: ${diff.regressed.join(", ")}\n`);
+      process.exit(1);
+    }
+    console.log("no regressions against the baseline\n");
+  }
 }
 
 main().catch((err: unknown) => {
