@@ -88,6 +88,28 @@ export async function runCountsByPrompt(): Promise<Record<string, number>> {
   return counts;
 }
 
+/** Every saved run, newest first. Powers the history screen. */
+export async function listRuns(limit = 100): Promise<EvalRun[]> {
+  let files: string[];
+  try {
+    files = (await fs.readdir(RUNS_DIR)).filter((f) => f.endsWith(".json"));
+  } catch {
+    return [];
+  }
+
+  const runs: EvalRun[] = [];
+  for (const file of files) {
+    try {
+      runs.push(JSON.parse(await fs.readFile(path.join(RUNS_DIR, file), "utf8")) as EvalRun);
+    } catch {
+      // Skip anything unreadable rather than failing the whole page.
+    }
+  }
+
+  runs.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  return runs.slice(0, limit);
+}
+
 export async function saveBaseline(run: EvalRun): Promise<void> {
   await fs.mkdir(path.dirname(BASELINE_FILE), { recursive: true });
   await fs.writeFile(BASELINE_FILE, JSON.stringify(run, null, 2), "utf8");

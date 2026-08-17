@@ -12,11 +12,70 @@ import type { CheckResult, EvalRow } from "@/lib/types";
  * is always "failed how", and making that a navigation step means it gets skipped.
  * The trace link is separate, for when the answer is "I need to see everything".
  */
+type Filter = "all" | "failed" | "prompt" | "retrieval" | "degraded";
+
 export function ResultsTable({ rows, running }: { rows: EvalRow[]; running: boolean }) {
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [filter, setFilter] = useState<Filter>("all");
+
+  const failed = rows.filter((r) => !r.passed);
+
+  const visible = rows.filter((r) => {
+    if (filter === "all") return true;
+    if (filter === "failed") return !r.passed;
+    return r.failureCategory === filter;
+  });
+
+  /**
+   * Which check is failing most, across the run.
+   *
+   * With fourteen tests you can read the table. With a hundred you cannot, and the
+   * useful question stops being "which tickets failed" and becomes "what is going
+   * wrong" — one broken check across forty tickets is one fix, not forty.
+   */
+  const checkCounts = new Map<string, number>();
+  for (const row of failed) {
+    for (const check of row.checks) {
+      if (!check.diagnostic && !check.skipped && !check.passed) {
+        checkCounts.set(check.name, (checkCounts.get(check.name) ?? 0) + 1);
+      }
+    }
+  }
+  const worstChecks = [...checkCounts.entries()].sort((a, b) => b[1] - a[1]);
+
+  const categoryCount = (c: Filter): number =>
+    c === "all" ? rows.length : c === "failed" ? failed.length : rows.filter((r) => r.failureCategory === c).length;
 
   return (
-    <div className="overflow-x-auto rounded border border-line">
+    <div className="flex flex-col gap-3">
+      {rows.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2">
+          {(["all", "failed", "prompt", "retrieval", "degraded"] as Filter[]).map((f) => {
+            const count = categoryCount(f);
+            if (count === 0 && f !== "all" && f !== "failed") return null;
+            return (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`rounded border px-2 py-1 font-mono text-[11px] ${
+                  filter === f ? "border-info text-info" : "border-line text-muted hover:bg-raised"
+                }`}
+              >
+                {f} {count}
+              </button>
+            );
+          })}
+
+          {worstChecks.length > 0 && (
+            <span className="ml-auto font-mono text-[11px] text-muted">
+              failing checks:{" "}
+              {worstChecks.map(([name, n]) => `${name} ×${n}`).join(" · ")}
+            </span>
+          )}
+        </div>
+      )}
+
+      <div className="overflow-x-auto rounded border border-line">
       <table className="w-full border-collapse text-left">
         <thead>
           <tr className="border-b border-line bg-panel text-xs text-muted">
@@ -30,7 +89,7 @@ export function ResultsTable({ rows, running }: { rows: EvalRow[]; running: bool
           </tr>
         </thead>
         <tbody>
-          {rows.map((row) => {
+          {visible.map((row) => {
             const isOpen = expanded === row.ticketId;
             return (
               <RowGroup
@@ -57,8 +116,18 @@ export function ResultsTable({ rows, running }: { rows: EvalRow[]; running: bool
               </td>
             </tr>
           )}
+
+          {!running && rows.length > 0 && visible.length === 0 && (
+            <tr>
+              <td colSpan={7} className="px-3 py-6 text-center text-muted">
+                Nothing matches the <span className="font-mono">{filter}</span> filter — which
+                is usually good news.
+              </td>
+            </tr>
+          )}
         </tbody>
-      </table>
+        </table>
+      </div>
     </div>
   );
 }

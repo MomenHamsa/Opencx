@@ -29,6 +29,7 @@ export default async function Home() {
       </header>
 
       <EvalScreen
+        testCount={workspace.cases.length}
         prompts={prompts}
         initialBaseline={baseline}
         providers={providers}

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { DiffPanel } from "@/components/eval/DiffPanel";
 import { ResultsTable } from "@/components/eval/ResultsTable";
+import { RunProgress } from "@/components/eval/RunProgress";
 import { diffAgainstBaseline } from "@/lib/eval/diff";
 import type { ProviderOption } from "@/lib/llm/factory";
 import { formatTokens, formatUsd } from "@/lib/cost";
@@ -27,16 +28,19 @@ export function EvalScreen({
   prompts,
   initialBaseline,
   providers,
+  testCount,
 }: {
   prompts: PromptOption[];
   initialBaseline: EvalRun | null;
   providers: ProviderOption[];
+  testCount: number;
 }) {
   const [promptVersion, setPromptVersion] = useState(prompts[prompts.length - 1]?.id ?? "v1");
   const [providerId, setProviderId] = useState("mock");
   const [model, setModel] = useState("");
   const [useModelJudge, setUseModelJudge] = useState(false);
   const [models, setModels] = useState<Record<string, string[]>>({});
+  const [startedAt, setStartedAt] = useState<number | null>(null);
   const [status, setStatus] = useState<Status>("idle");
   const [rows, setRows] = useState<EvalRow[]>([]);
   const [run, setRun] = useState<EvalRun | null>(null);
@@ -70,6 +74,7 @@ export function EvalScreen({
     setDiff(null);
     setError(null);
     setStatus("idle");
+    setStartedAt(null);
   }
 
   // Asked once, so the model dropdown reflects what the key can actually reach
@@ -83,6 +88,7 @@ export function EvalScreen({
 
   async function runEvaluation(): Promise<void> {
     setStatus("running");
+    setStartedAt(Date.now());
     setRows([]);
     setRun(null);
     setDiff(null);
@@ -292,6 +298,8 @@ export function EvalScreen({
           {error}
         </div>
       )}
+
+      {running && <RunProgress done={rows.length} total={testCount} startedAt={startedAt} />}
 
       <DiffPanel
         diff={diff}
