@@ -161,7 +161,7 @@ export function PlaygroundForm({
         <button
           onClick={() => void run()}
           disabled={running || body.trim() === ""}
-          className="rounded bg-info px-3 py-1.5 font-mono text-xs font-semibold text-ink hover:opacity-90 disabled:opacity-40"
+          className="rounded bg-accent px-4 py-1.5 font-mono text-xs font-semibold text-white hover:opacity-90 disabled:opacity-40"
         >
           {running ? "running…" : "Run and open trace"}
         </button>

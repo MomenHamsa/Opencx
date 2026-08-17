@@ -31,7 +31,7 @@ export function Field({
 }
 
 const inputClass =
-  "rounded border border-line bg-panel px-3 py-2 text-sm placeholder:text-muted/50 focus:border-info focus:outline-none disabled:opacity-50";
+  "rounded border border-line bg-panel px-3 py-2 text-sm placeholder:text-muted/50 focus:border-accent focus:outline-none disabled:opacity-50";
 
 export function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} className={`${inputClass} ${props.className ?? ""}`} />;
@@ -101,7 +101,7 @@ export function Button({
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "default" | "danger" }) {
   const styles = {
-    primary: "bg-info text-ink font-semibold hover:opacity-90",
+    primary: "bg-accent-strong text-white font-semibold hover:opacity-90",
     default: "border border-line hover:bg-raised",
     danger: "border border-fail/50 text-fail hover:bg-fail/10",
   }[variant];
@@ -147,7 +147,7 @@ export function ListRow({
     <button
       onClick={onClick}
       className={`w-full rounded border px-3 py-2 text-left ${
-        active ? "border-info bg-raised" : "border-line hover:bg-raised"
+        active ? "border-accent bg-accent-soft" : "border-line hover:bg-raised"
       }`}
     >
       <div className="flex items-baseline justify-between gap-2">

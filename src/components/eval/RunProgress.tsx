@@ -41,7 +41,7 @@ export function RunProgress({
     <div className="flex flex-col gap-1">
       <div className="h-1 overflow-hidden rounded bg-raised">
         <div
-          className="h-full bg-info transition-[width] duration-200"
+          className="h-full bg-accent transition-[width] duration-200"
           style={{ width: `${fraction * 100}%` }}
         />
       </div>

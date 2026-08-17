@@ -1,25 +1,49 @@
 @import "tailwindcss";
 
 /*
- * Dense, calm, engineering-tool feel. Monospace for anything a machine produced —
- * ids, scores, raw output — and a sans face only for prose.
+ * Colour has one job here: tell you what to do next, and what a thing means.
  *
- * Pass green and fail red are picked for a projector rather than a laptop. Projectors
- * wash out anything pastel and crush dark tones together, so both colours are
- * saturated and separated in lightness as well as hue: someone at the back of the
- * room should be able to read the column without reading the words.
+ * The rule this palette is built on — **one meaning per colour**. Before this,
+ * `info` was doing five jobs at once (primary button, active tab, retrieval
+ * category, locked prompt, progress bar), which meant it taught you nothing: if
+ * blue is everywhere, blue is decoration.
+ *
+ *   accent  violet   "do this" / "you are here" — primary buttons, active nav, focus
+ *   pass    green    it passed
+ *   fail    red      it failed, or this deletes something
+ *   warn    amber    this costs money, or your prompt owns this failure
+ *   info    blue     a different layer — retrieval, diagnostics, frozen state
+ *
+ * Saturation is a budget. On any screen the strongest colour should be the thing
+ * you most likely came to do, and everything else should recede — which is why the
+ * surfaces are near-monochrome and the text scale carries most of the hierarchy.
  */
 @theme {
-  --color-ink: #0b0e14;
-  --color-panel: #12161f;
-  --color-raised: #1a1f2b;
-  --color-line: #262d3a;
-  --color-muted: #8b95a7;
-  --color-text: #e6edf3;
+  /* Surfaces, darkest to lightest. */
+  --color-ink: #0a0c11;
+  --color-panel: #12161e;
+  --color-raised: #1a1f29;
+  --color-line: #272d39;
+  --color-line-strong: #39414f;
+
+  /* Text. `muted` is deliberately lighter than a typical secondary grey — it
+     carries most of the labelling in this UI, so it has to stay readable. */
+  --color-text: #e9eef6;
+  --color-muted: #97a1b2;
+  --color-faint: #7b8698;
+
+  /* Semantic. One job each. */
+  /* Split on purpose. A single accent cannot be both a readable label on a dark
+     surface and a button background that white text passes AA against — the first
+     wants brightness, the second wants darkness. Measured: white on #8b7cff is
+     3.4:1 (fails); white on #6d5ce8 is 4.8:1 (passes). */
+  --color-accent: #8b7cff;
+  --color-accent-strong: #6d5ce8;
+  --color-accent-soft: #191838;
   --color-pass: #3fb950;
-  --color-fail: #ff6b6b;
-  --color-warn: #d9a441;
-  --color-info: #6cb6ff;
+  --color-fail: #f4696e;
+  --color-warn: #e0a33e;
+  --color-info: #58a6ff;
 
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -34,7 +58,23 @@ body {
   line-height: 1.55;
 }
 
-/* Tabular figures so scores and latencies line up column-wise in the table. */
+/* Tabular figures so scores, tokens and latencies line up column-wise. */
 .tnum {
   font-variant-numeric: tabular-nums;
+}
+
+/* One visible focus style everywhere, so keyboard use is never a guessing game. */
+*:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* Section label: the small uppercase text that names a group. */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-faint);
 }

@@ -58,7 +58,7 @@ export function ResultsTable({ rows, running }: { rows: EvalRow[]; running: bool
                 key={f}
                 onClick={() => setFilter(f)}
                 className={`rounded border px-2 py-1 font-mono text-[11px] ${
-                  filter === f ? "border-info text-info" : "border-line text-muted hover:bg-raised"
+                  filter === f ? "border-accent bg-accent-soft text-text" : "border-line text-muted hover:bg-raised"
                 }`}
               >
                 {f} {count}

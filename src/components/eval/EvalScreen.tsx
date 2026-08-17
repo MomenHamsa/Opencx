@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { DiffPanel } from "@/components/eval/DiffPanel";
 import { ResultsTable } from "@/components/eval/ResultsTable";
@@ -176,130 +177,184 @@ export function EvalScreen({
   const passed = rows.filter((r) => r.passed).length;
   const isLive = providers.find((p) => p.id === providerId)?.live === true;
   const running = status === "running";
+  // Shown next to the score so the number has a reference point. A bare "12 / 14"
+  // does not tell you whether today went well.
+  const delta =
+    run !== null && baseline !== null && rows.length > 0 ? passed - baseline.passed : null;
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Controls */}
-      <div className="flex flex-wrap items-end gap-4 rounded border border-line bg-panel p-4">
-        <Field label="prompt version">
-          <select
-            value={promptVersion}
-            onChange={(e) => selectPrompt(e.target.value)}
-            disabled={running}
-            className="rounded border border-line bg-raised px-2 py-1 font-mono text-xs disabled:opacity-50"
-          >
-            {prompts.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.id} — {p.label}
-              </option>
-            ))}
-          </select>
-        </Field>
-
-        <Field label="provider">
-          <select
-            value={providerId}
-            onChange={(e) => selectProvider(e.target.value)}
-            disabled={running}
-            className="rounded border border-line bg-raised px-2 py-1 font-mono text-xs disabled:opacity-50"
-          >
-            {providers.map((p) => (
-              <option key={p.id} value={p.id} disabled={!p.available}>
-                {p.id} — {p.label}
-              </option>
-            ))}
-          </select>
-        </Field>
-
-        {isLive && (models[providerId] ?? []).length > 0 && (
-          <Field label="model">
+      {/*
+        Two cards, not one row. Before this, seven controls, two buttons and the
+        score shared a single flex line and nothing said what to press. Settings
+        and result are different questions and now look like it: one card you
+        configure, one card that answers.
+      */}
+      <section className="rounded-md border border-line bg-panel">
+        <div className="flex flex-wrap items-end gap-x-5 gap-y-3 p-4">
+          <Field label="prompt">
             <select
-              value={model}
-              onChange={(e) => {
-                setModel(e.target.value);
-                clearResults();
-              }}
+              value={promptVersion}
+              onChange={(e) => selectPrompt(e.target.value)}
               disabled={running}
-              className="max-w-[13rem] rounded border border-line bg-raised px-2 py-1 font-mono text-xs disabled:opacity-50"
+              className={selectClass}
             >
-              <option value="">default</option>
-              {(models[providerId] ?? []).map((m) => (
-                <option key={m} value={m}>
-                  {m}
+              {prompts.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.id} — {p.label}
                 </option>
               ))}
             </select>
           </Field>
-        )}
 
-        {isLive && (
-          <Field label="grounding judge">
-            <label className="flex items-center gap-2 py-1 font-mono text-xs">
-              <input
-                type="checkbox"
-                checked={useModelJudge}
-                disabled={running}
+          <Field label="provider">
+            <select
+              value={providerId}
+              onChange={(e) => selectProvider(e.target.value)}
+              disabled={running}
+              className={selectClass}
+            >
+              {providers.map((p) => (
+                <option key={p.id} value={p.id} disabled={!p.available}>
+                  {p.id} — {p.label}
+                </option>
+              ))}
+            </select>
+          </Field>
+
+          {isLive && (models[providerId] ?? []).length > 0 && (
+            <Field label="model">
+              <select
+                value={model}
                 onChange={(e) => {
-                  setUseModelJudge(e.target.checked);
+                  setModel(e.target.value);
                   clearResults();
                 }}
-              />
-              {/* One extra call per row, so it is opt-in and says so. */}
-              <span className={useModelJudge ? "" : "text-muted"}>
-                {useModelJudge ? "model (2× calls)" : "heuristic (free)"}
-              </span>
-            </label>
-          </Field>
+                disabled={running}
+                className={`${selectClass} max-w-[12rem]`}
+              >
+                <option value="">default</option>
+                {(models[providerId] ?? []).map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          )}
+
+          {isLive && (
+            <Field label="grounding judge">
+              <label className="flex cursor-pointer items-center gap-2 py-1 font-mono text-xs">
+                <input
+                  type="checkbox"
+                  checked={useModelJudge}
+                  disabled={running}
+                  onChange={(e) => {
+                    setUseModelJudge(e.target.checked);
+                    clearResults();
+                  }}
+                  className="accent-[var(--color-accent-strong)]"
+                />
+                <span className={useModelJudge ? "text-text" : "text-muted"}>
+                  {useModelJudge ? "model · 2× calls" : "heuristic · free"}
+                </span>
+              </label>
+            </Field>
+          )}
+
+          {/* The only filled control on the screen. If you are unsure what to do,
+              the saturated thing is the answer. */}
+          <button
+            onClick={() => void runEvaluation()}
+            disabled={running || testCount === 0}
+            className="ml-auto rounded bg-accent-strong px-5 py-2 font-mono text-xs font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+          >
+            {running ? "running…" : `Run ${testCount} test${testCount === 1 ? "" : "s"}`}
+          </button>
+        </div>
+
+        {isLive && (
+          <p className="border-t border-line px-4 py-2 font-mono text-[11px] text-warn">
+            Live model — one API call per test{useModelJudge ? ", doubled by the model judge" : ""},
+            billed to your key.
+          </p>
         )}
 
-        <button
-          onClick={() => void runEvaluation()}
-          disabled={running}
-          className="rounded bg-info px-3 py-1.5 font-mono text-xs font-semibold text-ink hover:opacity-90 disabled:opacity-40"
-        >
-          {running ? "running…" : "Run Evaluation"}
-        </button>
+        {testCount === 0 && (
+          <p className="border-t border-line px-4 py-2 text-xs text-warn">
+            There are no tests to run yet.{" "}
+            <Link href="/tests" className="underline">
+              Write your first test
+            </Link>{" "}
+            — it needs an article to cite, so add{" "}
+            <Link href="/kb" className="underline">
+              knowledge
+            </Link>{" "}
+            first.
+          </p>
+        )}
+      </section>
 
-        <button
-          onClick={() => void promoteBaseline()}
-          disabled={run === null || saving}
-          title="Promote this run to the baseline every future run is compared against"
-          className="rounded border border-line px-3 py-1.5 font-mono text-xs hover:bg-raised disabled:opacity-40"
-        >
-          {saving ? "saving…" : "Save as baseline"}
-        </button>
-
-        <div className="ml-auto text-right">
-          <div className="tnum font-mono text-3xl font-semibold">
-            <span className={rows.length === 0 ? "text-muted" : passed === rows.length ? "text-pass" : ""}>
-              {passed}
-            </span>
-            <span className="text-muted"> / {rows.length || "—"}</span>
-          </div>
-          <div className="font-mono text-[11px] text-muted">
-            {run !== null ? `${run.provider}/${run.model}` : "not run yet"}
-          </div>
-          {/* Tokens are reported by the provider and exact; the dollar figure is an
-              estimate from a local price table, so it is labelled as one. */}
-          {run?.usage !== undefined && (
-            <div className="font-mono text-[11px] text-muted">
-              {formatTokens(run.usage.promptTokens)} in ·{" "}
-              {formatTokens(run.usage.completionTokens)} out
-              {run.estimatedCostUsd !== null && run.estimatedCostUsd !== undefined && (
-                <> · est. {formatUsd(run.estimatedCostUsd)}</>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
+      {running && <RunProgress done={rows.length} total={testCount} startedAt={startedAt} />}
 
       {error !== null && (
-        <div className="rounded border border-fail/50 bg-fail/10 px-4 py-3 font-mono text-xs text-fail">
+        <div className="rounded-md border border-fail/50 bg-fail/10 px-4 py-3 font-mono text-xs text-fail">
           {error}
         </div>
       )}
 
-      {running && <RunProgress done={rows.length} total={testCount} startedAt={startedAt} />}
+      {/* The answer. Only appears once there is one. */}
+      {rows.length > 0 && (
+        <section className="flex flex-wrap items-center gap-x-8 gap-y-3 rounded-md border border-line bg-panel px-5 py-4">
+          <div>
+            <div className="tnum font-mono text-4xl leading-none font-semibold">
+              <span className={passed === rows.length ? "text-pass" : "text-text"}>{passed}</span>
+              <span className="text-faint"> / {rows.length}</span>
+            </div>
+            <div className="mt-1 font-mono text-[11px] text-muted">
+              {Math.round((passed / rows.length) * 100)}% passing
+            </div>
+          </div>
+
+          {delta !== null && (
+            <div>
+              <div
+                className={`tnum font-mono text-2xl leading-none font-semibold ${
+                  delta > 0 ? "text-pass" : delta < 0 ? "text-fail" : "text-faint"
+                }`}
+              >
+                {delta > 0 ? "+" : ""}
+                {delta}
+              </div>
+              <div className="mt-1 font-mono text-[11px] text-muted">
+                vs baseline {baseline?.promptVersion} ({baseline?.passed}/{baseline?.total})
+              </div>
+            </div>
+          )}
+
+          <div className="font-mono text-[11px] text-muted">
+            <div>{run !== null ? `${run.provider}/${run.model}` : "…"}</div>
+            {run?.usage !== undefined && (
+              <div className="text-faint">
+                {formatTokens(run.usage.promptTokens + run.usage.completionTokens)} tokens
+                {run.estimatedCostUsd !== null && run.estimatedCostUsd !== undefined && (
+                  <> · est. {formatUsd(run.estimatedCostUsd)}</>
+                )}
+              </div>
+            )}
+          </div>
+
+          <button
+            onClick={() => void promoteBaseline()}
+            disabled={run === null || saving}
+            title="Make this the run every future run is compared against"
+            className="ml-auto rounded border border-line px-3 py-1.5 font-mono text-xs text-muted transition-colors hover:border-accent hover:text-text disabled:opacity-40"
+          >
+            {saving ? "saving…" : "Set as baseline"}
+          </button>
+        </section>
+      )}
 
       <DiffPanel
         diff={diff}
@@ -309,22 +364,12 @@ export function EvalScreen({
       />
 
       <ResultsTable rows={rows} running={running} />
-
-      <p className="text-xs text-muted">
-        Baseline:{" "}
-        {baseline === null ? (
-          "none saved"
-        ) : (
-          <span className="font-mono">
-            {baseline.promptVersion} {baseline.passed}/{baseline.total} ({baseline.runId})
-          </span>
-        )}
-        . Click any row to see which checks failed; click <span className="font-mono">open</span> for
-        the full trace.
-      </p>
     </div>
   );
 }
+
+const selectClass =
+  "rounded border border-line bg-raised px-2 py-1.5 font-mono text-xs transition-colors hover:border-line-strong focus:border-accent focus:outline-none disabled:opacity-50";
 
 type StreamMessage =
   | { type: "row"; row: EvalRow }
