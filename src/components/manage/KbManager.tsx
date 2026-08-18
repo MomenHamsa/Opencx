@@ -130,7 +130,7 @@ export function KbManager({ initial }: { initial: Article[] }) {
         editing === null ? (
           <p className="text-muted">Select an article, or create one.</p>
         ) : (
-          <div className="flex flex-col gap-4 rounded border border-line bg-panel p-5">
+          <div className="flex flex-col gap-4 card p-5">
             <Field label="id" hint="used in citations — lowercase, no spaces">
               <TextInput
                 value={editing.id}

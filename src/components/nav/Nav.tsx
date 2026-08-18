@@ -55,7 +55,7 @@ export function Nav() {
         <Link
           href="/"
           aria-current={onRun ? "page" : undefined}
-          className={`rounded px-3 py-1 font-mono text-xs font-semibold transition-colors ${
+          className={`rounded-md px-3 py-1 font-mono text-xs font-semibold transition-colors ${
             onRun
               ? "bg-accent-strong text-white"
               : "border border-line text-muted hover:border-accent hover:text-text"

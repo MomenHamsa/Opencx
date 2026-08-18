@@ -42,7 +42,7 @@ export default async function RunsPage() {
       </PageHeader>
 
       {runs.length === 0 ? (
-        <p className="rounded border border-line bg-panel px-4 py-6 text-center text-muted">
+        <p className="card px-4 py-6 text-center text-muted">
           No runs saved yet. Runs appear here after you press Run Evaluation.
         </p>
       ) : (

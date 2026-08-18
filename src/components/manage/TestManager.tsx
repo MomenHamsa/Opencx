@@ -158,7 +158,7 @@ export function TestManager({
           <p className="text-muted">Select a test, or create one.</p>
         ) : (
           <div className="flex flex-col gap-5">
-            <section className="flex flex-col gap-4 rounded border border-line bg-panel p-5">
+            <section className="flex flex-col gap-4 card p-5">
               <h2 className="font-mono text-xs tracking-wide text-muted uppercase">The ticket</h2>
 
               <div className="grid gap-4 sm:grid-cols-3">
@@ -209,7 +209,7 @@ export function TestManager({
               </Field>
             </section>
 
-            <section className="flex flex-col gap-4 rounded border border-line bg-panel p-5">
+            <section className="flex flex-col gap-4 card p-5">
               <h2 className="font-mono text-xs tracking-wide text-muted uppercase">
                 What a good agent must do
               </h2>

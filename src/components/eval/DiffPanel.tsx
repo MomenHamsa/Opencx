@@ -25,7 +25,7 @@ export function DiffPanel({
   if (diff === null) {
     if (currentTotal === 0) return null;
     return (
-      <div className="rounded border border-dashed border-line px-4 py-3 text-xs text-muted">
+      <div className="rounded-md border border-dashed border-line px-4 py-3 text-xs text-muted">
         No baseline saved yet. Press{" "}
         <span className="font-mono text-text">Set as baseline</span> to fix this run as the
         reference every later run is measured against.
@@ -34,7 +34,7 @@ export function DiffPanel({
   }
 
   return (
-    <section className="rounded border border-line bg-panel">
+    <section className="card">
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-line px-4 py-2 font-mono text-[11px]">
         <span className="text-text">
           {currentVersion} {currentPassed}/{currentTotal}

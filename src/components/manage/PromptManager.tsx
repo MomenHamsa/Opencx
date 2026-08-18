@@ -163,9 +163,9 @@ export function PromptManager({
         editing === null ? (
           <p className="text-muted">Select a prompt version, or create one.</p>
         ) : (
-          <div className="flex flex-col gap-4 rounded border border-line bg-panel p-5">
+          <div className="flex flex-col gap-4 card p-5">
             {frozen && (
-              <div className="rounded border border-info/50 bg-info/10 px-3 py-2 text-xs">
+              <div className="rounded-md border border-info/50 bg-info/10 px-3 py-2 text-xs">
                 <span className="font-mono font-semibold text-info">frozen</span> — this version has
                 been evaluated {runs} time{runs === 1 ? "" : "s"}, and a score is attached to this
                 exact wording. Use <span className="font-mono">Save as new version</span> to change
@@ -174,7 +174,7 @@ export function PromptManager({
             )}
 
             {!isNew && !simulatableIds.includes(editing.id) && (
-              <div className="rounded border border-warn/50 bg-warn/10 px-3 py-2 text-xs text-warn">
+              <div className="rounded-md border border-warn/50 bg-warn/10 px-3 py-2 text-xs text-warn">
                 The offline mock only simulates the two bundled prompts — it recognises five
                 specific phrases and nothing else. Evaluate this version against a real model, or
                 the score will be meaningless.

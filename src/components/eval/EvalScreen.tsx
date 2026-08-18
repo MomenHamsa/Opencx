@@ -194,7 +194,7 @@ export function EvalScreen({
         and result are different questions and now look like it: one card you
         configure, one card that answers.
       */}
-      <section className="rounded border border-line bg-panel">
+      <section className="card">
         <div className="flex flex-wrap items-end gap-x-5 gap-y-3 p-4">
           <Field label="prompt">
             <select
@@ -272,7 +272,7 @@ export function EvalScreen({
           <button
             onClick={() => void runEvaluation()}
             disabled={running || testCount === 0}
-            className="ml-auto rounded bg-accent-strong px-5 py-2 font-mono text-xs font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+            className="ml-auto rounded-md bg-accent-strong px-5 py-2 font-mono text-xs font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-40"
           >
             {running ? "running…" : `Run ${testCount} test${testCount === 1 ? "" : "s"}`}
           </button>
@@ -303,7 +303,7 @@ export function EvalScreen({
       {running && <RunProgress done={rows.length} total={testCount} startedAt={startedAt} />}
 
       {error !== null && (
-        <div className="rounded border border-fail/50 bg-fail/10 px-4 py-3 font-mono text-xs text-fail">
+        <div className="rounded-md border border-fail/50 bg-fail/10 px-4 py-3 font-mono text-xs text-fail">
           {error}
         </div>
       )}
@@ -311,7 +311,7 @@ export function EvalScreen({
       {/* The answer. One hero figure, per the stat-tile spec — before this, five
           large numbers competed and none of them won. */}
       {rows.length > 0 && (
-        <section className="flex flex-wrap items-end gap-x-10 gap-y-4 rounded border border-line bg-panel px-5 py-4">
+        <section className="flex flex-wrap items-end gap-x-10 gap-y-4 card px-5 py-4">
           <StatTile
             hero
             label="Passing"
@@ -346,7 +346,7 @@ export function EvalScreen({
             onClick={() => void promoteBaseline()}
             disabled={run === null || saving}
             title="Make this the run every future run is compared against"
-            className="ml-auto rounded border border-line px-3 py-1.5 font-mono text-xs text-muted transition-colors hover:border-accent hover:text-text disabled:opacity-40"
+            className="ml-auto rounded-md border border-line px-3 py-1.5 font-mono text-xs text-muted transition-colors hover:border-accent hover:text-text disabled:opacity-40"
           >
             {saving ? "saving…" : "Set as baseline"}
           </button>
@@ -366,7 +366,7 @@ export function EvalScreen({
 }
 
 const selectClass =
-  "rounded border border-line bg-raised px-2 py-1.5 font-mono text-xs transition-colors hover:border-line-strong focus:border-accent focus:outline-none disabled:opacity-50";
+  "rounded-md border border-line bg-raised px-2 py-1.5 font-mono text-xs transition-colors hover:border-line-strong focus:border-accent focus:outline-none disabled:opacity-50";
 
 type StreamMessage =
   | { type: "row"; row: EvalRow }

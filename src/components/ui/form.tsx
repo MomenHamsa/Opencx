@@ -31,7 +31,7 @@ export function Field({
 }
 
 const inputClass =
-  "rounded border border-line bg-panel px-3 py-2 text-sm placeholder:text-muted/50 focus:border-accent focus:outline-none disabled:opacity-50";
+  "card px-3 py-2 text-sm placeholder:text-muted/50 focus:border-accent focus:outline-none disabled:opacity-50";
 
 export function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} className={`${inputClass} ${props.className ?? ""}`} />;
@@ -84,7 +84,7 @@ export function ListInput({
 export function ErrorList({ errors }: { errors: string[] }) {
   if (errors.length === 0) return null;
   return (
-    <div className="rounded border border-fail/50 bg-fail/10 px-3 py-2">
+    <div className="rounded-md border border-fail/50 bg-fail/10 px-3 py-2">
       <ul className="flex flex-col gap-1">
         {errors.map((e) => (
           <li key={e} className="font-mono text-xs text-fail">
@@ -130,7 +130,7 @@ export function Button({
   return (
     <button
       {...props}
-      className={`rounded px-3 py-1.5 font-mono text-xs disabled:opacity-40 ${styles} ${props.className ?? ""}`}
+      className={`rounded-md px-3 py-1.5 font-mono text-xs disabled:opacity-40 ${styles} ${props.className ?? ""}`}
     />
   );
 }

@@ -57,7 +57,7 @@ function RuleMatrix({ a, b }: { a: PromptVersion; b: PromptVersion }) {
   const keys = Object.keys(FEATURE_LABELS) as (keyof PromptFeatures)[];
 
   return (
-    <section className="rounded border border-line bg-panel px-4 py-3">
+    <section className="card px-4 py-3">
       <h2 className="mb-2 font-mono text-xs tracking-wide text-muted uppercase">Rules present</h2>
       <div className="grid gap-1">
         {keys.map((key) => (
@@ -90,7 +90,7 @@ function RuleMark({ on }: { on: boolean }) {
 
 function PromptColumn({ prompt, run }: { prompt: PromptVersion; run: EvalRun }) {
   return (
-    <div className="rounded border border-line bg-panel">
+    <div className="card">
       <div className="border-b border-line px-4 py-3">
         <div className="flex items-baseline justify-between">
           <span className="font-mono text-sm font-semibold">

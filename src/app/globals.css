@@ -1,58 +1,49 @@
 @import "tailwindcss";
 
 /*
- * Colour has one job here: tell you what to do next, and what a thing means.
+ * Light theme.
  *
- * The rule this palette is built on — **one meaning per colour**. Before this,
- * `info` was doing five jobs at once (primary button, active tab, retrieval
- * category, locked prompt, progress bar), which meant it taught you nothing: if
- * blue is everywhere, blue is decoration.
+ * Not a flip of the dark palette — every value was re-picked for a light surface
+ * and re-validated, because contrast and colourblind separation both depend on the
+ * surface a colour actually renders against. Two results worth keeping in view:
  *
- *   accent  violet   "do this" / "you are here" — primary buttons, active nav, focus
- *   pass    green    it passed
- *   fail    red      it failed, or this deletes something
- *   warn    amber    this costs money, or your prompt owns this failure
- *   info    blue     a different layer — retrieval, diagnostics, frozen state
+ *  - pass/fail are #0f766e and #b91c1c. The obvious teal/red pair sat at ΔE 6.0
+ *    under deuteranopia; these measure 11.9, a clear pass, while staying AA as text
+ *    (5.0–6.5) on every surface. Measured with a validator, not chosen by eye.
+ *  - the accent is split. #4f46e5 is the readable ink; #4338ca is the button fill,
+ *    where white must clear 4.5 (it clears 7.9).
  *
- * Saturation is a budget. On any screen the strongest colour should be the thing
- * you most likely came to do, and everything else should recede — which is why the
- * surfaces are near-monochrome and the text scale carries most of the hierarchy.
+ * Colour still does one job each:
+ *   accent  indigo  do this / you are here
+ *   pass    teal    it passed
+ *   fail    red     it failed, or this deletes
+ *   warn    amber   costs money, or your prompt owns this
+ *   info    blue    a different layer — retrieval, diagnostics, frozen state
  */
 @theme {
-  /* Surfaces, darkest to lightest. */
-  --color-ink: #0a0c11;
-  --color-panel: #12161e;
-  --color-raised: #1a1f29;
-  --color-line: #272d39;
-  --color-line-strong: #39414f;
+  /* Surfaces. `ink` keeps its name from the dark theme so components did not have
+     to be rewritten — it just means "the plane behind everything" now. */
+  --color-ink: #f7f8fa;
+  --color-panel: #ffffff;
+  --color-raised: #f2f4f7;
+  --color-line: #e6e8ec;
+  --color-line-strong: #d0d5dd;
 
-  /* Text. `muted` is deliberately lighter than a typical secondary grey — it
-     carries most of the labelling in this UI, so it has to stay readable. */
-  --color-text: #e9eef6;
-  --color-muted: #97a1b2;
-  --color-faint: #7b8698;
+  --color-text: #101828;
+  --color-muted: #475467;
+  --color-faint: #5d6a7d;
 
-  /* Semantic. One job each. */
-  /* Split on purpose. A single accent cannot be both a readable label on a dark
-     surface and a button background that white text passes AA against — the first
-     wants brightness, the second wants darkness. Measured: white on #8b7cff is
-     3.4:1 (fails); white on #6d5ce8 is 4.8:1 (passes). */
-  --color-accent: #8b7cff;
-  --color-accent-strong: #6d5ce8;
-  --color-accent-soft: #191838;
-  /* Measured, not chosen. The obvious green/red pair (#3fb950 / #f4696e) sits at
-     ΔE 2.1 under deuteranopia — a deuteranope cannot tell pass from fail apart at
-     all. Nudging the green toward teal and the red toward coral lifts that to 8.7
-     while keeping 27.1 separation for normal vision, so it still reads green/red.
-     Both remain AA as text on every surface (6.5–9.6). Status colours still ship
-     with a word beside them; this makes the colour itself honest too. */
-  --color-pass: #4ec9b0;
-  --color-fail: #ff7b72;
-  --color-warn: #e0a33e;
-  --color-info: #58a6ff;
+  --color-accent: #4f46e5;
+  --color-accent-strong: #4338ca;
+  --color-accent-soft: #eef2ff;
+  --color-pass: #0f766e;
+  --color-fail: #b91c1c;
+  --color-warn: #b54708;
+  --color-info: #0b5cad;
 
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, Roboto, sans-serif;
 }
 
 html,
@@ -60,27 +51,50 @@ body {
   background: var(--color-ink);
   color: var(--color-text);
   font-family: var(--font-sans);
-  font-size: 13px;
-  line-height: 1.55;
+  /* 14px, not the 13px of the dark build. A denser grid suited a tool you squint
+     at; this one is meant to be comfortable to sit in. */
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Tabular figures so scores, tokens and latencies line up column-wise. */
+/* Tabular figures for columns that must align. Never for a display number —
+   equal-width digits make a large standalone figure look loose. */
 .tnum {
   font-variant-numeric: tabular-nums;
 }
 
-/* One visible focus style everywhere, so keyboard use is never a guessing game. */
 *:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
-/* Section label: the small uppercase text that names a group. */
+/* The small uppercase text that names a group. */
 .eyebrow {
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-faint);
+}
+
+/*
+ * Card. On a light plane, elevation reads better than a hard outline — a 1px border
+ * everywhere makes a light UI look like a spreadsheet. A hairline plus a very soft
+ * shadow gives the same separation without the noise.
+ */
+.card {
+  background: var(--color-panel);
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+  box-shadow:
+    0 1px 2px rgba(16, 24, 40, 0.04),
+    0 1px 3px rgba(16, 24, 40, 0.06);
+}
+
+.card-flat {
+  background: var(--color-panel);
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
 }

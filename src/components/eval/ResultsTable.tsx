@@ -148,7 +148,7 @@ function RowGroup({
         // A coloured left edge rather than a faint tint: at a glance you can count
         // the failures down the side of the table without reading a word.
         className={`cursor-pointer border-b border-line/60 border-l-2 transition-colors hover:bg-raised ${
-          row.passed ? "border-l-transparent" : "border-l-fail bg-fail/[0.06]"
+          row.passed ? "border-l-transparent" : "border-l-fail bg-fail/[0.045]"
         }`}
       >
         <Td className="font-mono text-xs">{row.ticketId}</Td>

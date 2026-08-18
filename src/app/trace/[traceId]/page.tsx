@@ -51,7 +51,7 @@ export default async function TracePage({
       </PageHeader>
 
       {trace.degraded && (
-        <div className="mb-5 rounded border border-fail/50 bg-fail/10 px-4 py-3">
+        <div className="mb-5 rounded-md border border-fail/50 bg-fail/10 px-4 py-3">
           <div className="font-mono text-xs font-semibold text-fail">DEGRADED</div>
           <p className="mt-1 text-muted">
             The model&apos;s answer was rejected and the run fell back to a safe
@@ -84,7 +84,7 @@ export default async function TracePage({
 
       <Section id="retrieved" title={`Retrieved articles (${trace.retrieved.length})`}>
         {missingExpected.length > 0 && (
-          <div className="mb-3 rounded border border-info/50 bg-info/10 px-3 py-2 text-xs">
+          <div className="mb-3 rounded-md border border-info/50 bg-info/10 px-3 py-2 text-xs">
             <span className="font-mono font-semibold text-info">retrieval miss</span> — the
             article that holds the answer,{" "}
             <span className="font-mono">{missingExpected.join(", ")}</span>, is not in this
@@ -105,7 +105,7 @@ export default async function TracePage({
             const wasCited = trace.output.citations.includes(r.articleId);
             const isExpected = expectedArticles.includes(r.articleId);
             return (
-              <div key={r.articleId} className="rounded border border-line bg-raised px-3 py-2">
+              <div key={r.articleId} className="rounded-md border border-line bg-raised px-3 py-2">
                 <div className="flex flex-wrap items-baseline gap-x-3">
                   <span className="tnum font-mono text-xs text-muted">#{i + 1}</span>
                   <span
@@ -139,7 +139,7 @@ export default async function TracePage({
       <Section id="tools" title={`Tool calls (${trace.toolCalls.length})`}>
         <div className="flex flex-col gap-2">
           {trace.toolCalls.map((c, i) => (
-            <div key={`${c.name}-${i}`} className="rounded border border-line bg-raised px-3 py-2">
+            <div key={`${c.name}-${i}`} className="rounded-md border border-line bg-raised px-3 py-2">
               <div className="flex items-baseline gap-3">
                 <span className="font-mono text-xs font-semibold">{c.name}</span>
                 <span className="tnum font-mono text-[11px] text-muted">{c.durationMs}ms</span>
@@ -170,13 +170,13 @@ export default async function TracePage({
       </Section>
 
       <Section id="reply" title="Reply, as the customer would read it">
-        <div className="rounded border border-line bg-raised px-4 py-3">
+        <div className="rounded-md border border-line bg-raised px-4 py-3">
           <pre className="whitespace-pre-wrap font-sans">{trace.output.reply}</pre>
         </div>
       </Section>
 
       <Section id="raw" title="Raw model response">
-        <details className="rounded border border-line bg-raised">
+        <details className="rounded-md border border-line bg-raised">
           <summary className="cursor-pointer px-3 py-2 font-mono text-xs text-muted">
             {trace.rawModelText.length} characters — verbatim, before any parsing
           </summary>
@@ -195,7 +195,7 @@ export default async function TracePage({
 
 function Facts({ trace }: { trace: Trace }) {
   return (
-    <div className="grid grid-cols-2 gap-x-6 gap-y-1 rounded border border-line bg-panel px-4 py-3 font-mono text-xs sm:grid-cols-4">
+    <div className="grid grid-cols-2 gap-x-6 gap-y-1 card px-4 py-3 font-mono text-xs sm:grid-cols-4">
       <Field k="prompt" v={trace.promptVersion} />
       <Field k="provider" v={`${trace.provider}/${trace.model}`} />
       <Field k="latency" v={`${trace.latencyMs}ms`} />

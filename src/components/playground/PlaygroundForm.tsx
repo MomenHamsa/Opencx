@@ -112,7 +112,7 @@ export function PlaygroundForm({
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
           placeholder="Zendesk connected but nothing is syncing"
-          className="rounded border border-line bg-panel px-3 py-2 placeholder:text-muted/60"
+          className="card px-3 py-2 placeholder:text-muted/60"
         />
       </label>
 
@@ -123,7 +123,7 @@ export function PlaygroundForm({
           onChange={(e) => setBody(e.target.value)}
           rows={10}
           placeholder="Paste anything a customer might send…"
-          className="rounded border border-line bg-panel px-3 py-2 font-sans placeholder:text-muted/60"
+          className="card px-3 py-2 font-sans placeholder:text-muted/60"
         />
       </label>
 
@@ -133,7 +133,7 @@ export function PlaygroundForm({
           <select
             value={promptVersion}
             onChange={(e) => setPromptVersion(e.target.value)}
-            className="rounded border border-line bg-panel px-2 py-1 font-mono text-xs"
+            className="card px-2 py-1 font-mono text-xs"
           >
             {prompts.map((p) => (
               <option key={p.id} value={p.id}>
@@ -148,7 +148,7 @@ export function PlaygroundForm({
           <select
             value={providerId}
             onChange={(e) => setProviderId(e.target.value)}
-            className="rounded border border-line bg-panel px-2 py-1 font-mono text-xs"
+            className="card px-2 py-1 font-mono text-xs"
           >
             {providers.map((p) => (
               <option key={p.id} value={p.id} disabled={!p.available}>
@@ -161,7 +161,7 @@ export function PlaygroundForm({
         <button
           onClick={() => void run()}
           disabled={running || body.trim() === ""}
-          className="rounded bg-accent px-4 py-1.5 font-mono text-xs font-semibold text-white hover:opacity-90 disabled:opacity-40"
+          className="rounded-md bg-accent-strong px-4 py-1.5 font-mono text-xs font-semibold text-white hover:opacity-90 disabled:opacity-40"
         >
           {running ? "running…" : "Run and open trace"}
         </button>
@@ -172,7 +172,7 @@ export function PlaygroundForm({
       </div>
 
       {error !== null && (
-        <div className="rounded border border-fail/50 bg-fail/10 px-4 py-3 font-mono text-xs text-fail">
+        <div className="rounded-md border border-fail/50 bg-fail/10 px-4 py-3 font-mono text-xs text-fail">
           {error}
         </div>
       )}
