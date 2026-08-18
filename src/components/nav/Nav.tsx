@@ -46,8 +46,8 @@ export function Nav() {
 
   return (
     <nav className="border-b border-line bg-panel">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-2.5">
-        <span className="font-mono text-xs font-semibold tracking-tight text-text">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-7 gap-y-2 px-6 py-3">
+        <span className="text-sm font-semibold tracking-tight text-text">
           CX Agent Lab
         </span>
 
@@ -55,7 +55,7 @@ export function Nav() {
         <Link
           href="/"
           aria-current={onRun ? "page" : undefined}
-          className={`rounded-md px-3 py-1 font-mono text-xs font-semibold transition-colors ${
+          className={`rounded-md px-3 py-1.5 text-[13px] font-semibold transition-colors ${
             onRun
               ? "bg-accent-strong text-white"
               : "border border-line text-muted hover:border-accent hover:text-text"
@@ -65,7 +65,7 @@ export function Nav() {
         </Link>
 
         {GROUPS.map((group) => (
-          <div key={group.label} className="flex items-center gap-3">
+          <div key={group.label} className="flex items-center gap-3.5">
             <span className="eyebrow">{group.label}</span>
             {group.items.map((item) => {
               const active = pathname.startsWith(item.href);
@@ -74,7 +74,7 @@ export function Nav() {
                   key={item.href}
                   href={item.href}
                   aria-current={active ? "page" : undefined}
-                  className={`border-b-2 pb-0.5 text-xs transition-colors ${
+                  className={`border-b-2 pb-0.5 text-[13px] font-medium transition-colors ${
                     active
                       ? "border-accent text-text"
                       : "border-transparent text-muted hover:text-text"

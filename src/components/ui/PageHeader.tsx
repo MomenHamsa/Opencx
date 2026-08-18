@@ -21,7 +21,7 @@ export function PageHeader({
       <div>
         <h1 className="text-lg font-semibold tracking-tight">{title}</h1>
         {children !== undefined && (
-          <p className="mt-0.5 max-w-2xl text-muted">{children}</p>
+          <p className="mt-1 max-w-3xl text-muted">{children}</p>
         )}
       </div>
       {aside !== undefined && <div className="shrink-0">{aside}</div>}

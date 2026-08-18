@@ -249,7 +249,7 @@ export function EvalScreen({
 
           {isLive && (
             <Field label="grounding judge">
-              <label className="flex cursor-pointer items-center gap-2 py-1 font-mono text-xs">
+              <label className="flex cursor-pointer items-center gap-2 py-1 text-[13px]">
                 <input
                   type="checkbox"
                   checked={useModelJudge}
@@ -272,7 +272,7 @@ export function EvalScreen({
           <button
             onClick={() => void runEvaluation()}
             disabled={running || testCount === 0}
-            className="ml-auto rounded-md bg-accent-strong px-5 py-2 font-mono text-xs font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+            className="ml-auto rounded-md bg-accent-strong px-5 py-2.5 text-[13px] font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-40"
           >
             {running ? "running…" : `Run ${testCount} test${testCount === 1 ? "" : "s"}`}
           </button>
@@ -346,7 +346,7 @@ export function EvalScreen({
             onClick={() => void promoteBaseline()}
             disabled={run === null || saving}
             title="Make this the run every future run is compared against"
-            className="ml-auto rounded-md border border-line px-3 py-1.5 font-mono text-xs text-muted transition-colors hover:border-accent hover:text-text disabled:opacity-40"
+            className="ml-auto rounded-md border border-line px-3 py-1.5 text-[13px] font-medium text-muted transition-colors hover:border-accent hover:text-text disabled:opacity-40"
           >
             {saving ? "saving…" : "Set as baseline"}
           </button>
@@ -360,13 +360,26 @@ export function EvalScreen({
         currentVersion={promptVersion}
       />
 
-      <ResultsTable rows={rows} running={running} />
+      {/* No results yet is a state, not an empty table. A headerless grid before the
+          first run is furniture; this says what to do instead. */}
+      {rows.length === 0 && !running ? (
+        <div className="card flex flex-col items-center gap-2 px-6 py-14 text-center">
+          <p className="text-base font-medium">Nothing scored yet</p>
+          <p className="max-w-sm text-muted">
+            {testCount === 0
+              ? "Add a test and it will show up here."
+              : `Press Run ${testCount} tests to score every test against ${promptVersion}, and see it compared to your baseline.`}
+          </p>
+        </div>
+      ) : (
+        <ResultsTable rows={rows} running={running} />
+      )}
     </div>
   );
 }
 
 const selectClass =
-  "rounded-md border border-line bg-raised px-2 py-1.5 font-mono text-xs transition-colors hover:border-line-strong focus:border-accent focus:outline-none disabled:opacity-50";
+  "rounded-md border border-line bg-raised px-2.5 py-1.5 text-[13px] transition-colors hover:border-line-strong focus:border-accent focus:outline-none disabled:opacity-50";
 
 type StreamMessage =
   | { type: "row"; row: EvalRow }
@@ -376,7 +389,7 @@ type StreamMessage =
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="font-mono text-[11px] text-muted">{label}</span>
+      <span className="field-label">{label}</span>
       {children}
     </label>
   );

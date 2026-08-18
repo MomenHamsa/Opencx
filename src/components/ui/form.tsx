@@ -21,9 +21,9 @@ export function Field({
 }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="font-mono text-[11px] text-muted">
+      <span className="field-label">
         {label}
-        {hint !== undefined && <span className="ml-2 normal-case opacity-70">{hint}</span>}
+        {hint !== undefined && <span className="field-hint ml-2 font-normal">{hint}</span>}
       </span>
       {children}
     </label>
@@ -43,7 +43,7 @@ export function TextArea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement
 
 export function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
   return (
-    <select {...props} className={`${inputClass} font-mono text-xs ${props.className ?? ""}`} />
+    <select {...props} className={`${inputClass} text-[13px] ${props.className ?? ""}`} />
   );
 }
 
@@ -114,7 +114,7 @@ export function SavedFlash({ at }: { at: number | null }) {
   }, [at]);
 
   if (!visible) return null;
-  return <span className="font-mono text-xs text-pass">saved</span>;
+  return <span className="text-[13px] font-medium text-pass">saved</span>;
 }
 
 export function Button({
@@ -130,7 +130,7 @@ export function Button({
   return (
     <button
       {...props}
-      className={`rounded-md px-3 py-1.5 font-mono text-xs disabled:opacity-40 ${styles} ${props.className ?? ""}`}
+      className={`rounded-md px-3 py-1.5 text-[13px] font-medium disabled:opacity-40 ${styles} ${props.className ?? ""}`}
     />
   );
 }
@@ -172,7 +172,7 @@ export function ListRow({
       }`}
     >
       <div className="flex items-baseline justify-between gap-2">
-        <span className="truncate font-mono text-xs">{title}</span>
+        <span className="truncate font-mono text-[12px]">{title}</span>
         {badge}
       </div>
       {subtitle !== undefined && (

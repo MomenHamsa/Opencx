@@ -30,7 +30,7 @@ export async function WorkspaceBar() {
 
   return (
     <div className="border-b border-line bg-ink">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-5 gap-y-1 px-6 py-1.5 font-mono text-[11px]">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-5 gap-y-1 px-6 py-2 text-[12px]">
         {counts.map((c, i) => (
           <span key={c.href} className="flex items-center gap-1.5">
             {i > 0 && <span className="text-line-strong">→</span>}

@@ -30,7 +30,7 @@ export default async function Home() {
       <PageHeader
         title="Run evaluation"
         aside={
-          <a href="/runs" className="font-mono text-xs text-info hover:underline">
+          <a href="/runs" className="text-[13px] font-medium text-info hover:underline">
             run history →
           </a>
         }

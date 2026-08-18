@@ -71,11 +71,27 @@ body {
 }
 
 /* The small uppercase text that names a group. */
+/* Group label. Sans, not mono — monospace on chrome reads as a terminal, and the
+   point of this pass was to stop looking like one. Mono is for ids and raw output. */
 .eyebrow {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.08em;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  color: var(--color-faint);
+}
+
+/* Field label / hint. They were the same size and both mono, so they ran together
+   as one string; the label now leads and the hint recedes. */
+.field-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.field-hint {
+  font-size: 12px;
+  font-weight: 400;
   color: var(--color-faint);
 }
 
