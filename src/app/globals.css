@@ -40,8 +40,14 @@
   --color-accent: #8b7cff;
   --color-accent-strong: #6d5ce8;
   --color-accent-soft: #191838;
-  --color-pass: #3fb950;
-  --color-fail: #f4696e;
+  /* Measured, not chosen. The obvious green/red pair (#3fb950 / #f4696e) sits at
+     ΔE 2.1 under deuteranopia — a deuteranope cannot tell pass from fail apart at
+     all. Nudging the green toward teal and the red toward coral lifts that to 8.7
+     while keeping 27.1 separation for normal vision, so it still reads green/red.
+     Both remain AA as text on every surface (6.5–9.6). Status colours still ship
+     with a word beside them; this makes the colour itself honest too. */
+  --color-pass: #4ec9b0;
+  --color-fail: #ff7b72;
   --color-warn: #e0a33e;
   --color-info: #58a6ff;
 

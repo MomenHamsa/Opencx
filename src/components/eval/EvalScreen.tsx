@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { DiffPanel } from "@/components/eval/DiffPanel";
 import { ResultsTable } from "@/components/eval/ResultsTable";
 import { RunProgress } from "@/components/eval/RunProgress";
+import { StatTile } from "@/components/eval/StatTile";
 import { diffAgainstBaseline } from "@/lib/eval/diff";
 import type { ProviderOption } from "@/lib/llm/factory";
 import { formatTokens, formatUsd } from "@/lib/cost";
@@ -30,11 +31,14 @@ export function EvalScreen({
   initialBaseline,
   providers,
   testCount,
+  trend,
 }: {
   prompts: PromptOption[];
   initialBaseline: EvalRun | null;
   providers: ProviderOption[];
   testCount: number;
+  /** Oldest first. Pass rates of recent runs, for the sparkline. */
+  trend: { rate: number; label: string }[];
 }) {
   const [promptVersion, setPromptVersion] = useState(prompts[prompts.length - 1]?.id ?? "v1");
   const [providerId, setProviderId] = useState("mock");
@@ -304,34 +308,27 @@ export function EvalScreen({
         </div>
       )}
 
-      {/* The answer. Only appears once there is one. */}
+      {/* The answer. One hero figure, per the stat-tile spec — before this, five
+          large numbers competed and none of them won. */}
       {rows.length > 0 && (
-        <section className="flex flex-wrap items-center gap-x-8 gap-y-3 rounded border border-line bg-panel px-5 py-4">
-          <div>
-            <div className="tnum font-mono text-4xl leading-none font-semibold">
-              <span className={passed === rows.length ? "text-pass" : "text-text"}>{passed}</span>
-              <span className="text-faint"> / {rows.length}</span>
-            </div>
-            <div className="mt-1 font-mono text-[11px] text-muted">
-              {Math.round((passed / rows.length) * 100)}% passing
-            </div>
-          </div>
-
-          {delta !== null && (
-            <div>
-              <div
-                className={`tnum font-mono text-2xl leading-none font-semibold ${
-                  delta > 0 ? "text-pass" : delta < 0 ? "text-fail" : "text-faint"
-                }`}
-              >
-                {delta > 0 ? "+" : ""}
-                {delta}
-              </div>
-              <div className="mt-1 font-mono text-[11px] text-muted">
-                vs baseline {baseline?.promptVersion} ({baseline?.passed}/{baseline?.total})
-              </div>
-            </div>
-          )}
+        <section className="flex flex-wrap items-end gap-x-10 gap-y-4 rounded border border-line bg-panel px-5 py-4">
+          <StatTile
+            hero
+            label="Passing"
+            value={
+              <>
+                <span className={passed === rows.length ? "text-pass" : "text-text"}>{passed}</span>
+                <span className="text-faint"> / {rows.length}</span>
+              </>
+            }
+            delta={delta}
+            sub={
+              delta !== null && baseline !== null
+                ? `${Math.round((passed / rows.length) * 100)}% · vs baseline ${baseline.promptVersion} (${baseline.passed}/${baseline.total})`
+                : `${Math.round((passed / rows.length) * 100)}% of tests`
+            }
+            trend={trend}
+          />
 
           <div className="font-mono text-[11px] text-muted">
             <div>{run !== null ? `${run.provider}/${run.model}` : "…"}</div>

@@ -83,7 +83,7 @@ function Bucket({
   return (
     <div className="bg-panel px-4 py-3">
       <div className="flex items-baseline gap-2">
-        <span className={`tnum font-mono text-2xl leading-none font-semibold ${countColour}`}>
+        <span className={`text-2xl leading-none font-semibold ${countColour}`}>
           {ids.length}
         </span>
         <span className="eyebrow">{label}</span>

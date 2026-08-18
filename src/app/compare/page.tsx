@@ -96,7 +96,7 @@ function PromptColumn({ prompt, run }: { prompt: PromptVersion; run: EvalRun }) 
           <span className="font-mono text-sm font-semibold">
             {prompt.id} — {prompt.label}
           </span>
-          <span className="tnum font-mono text-lg font-semibold">
+          <span className="text-lg font-semibold">
             <span className={run.passed > run.total / 2 ? "text-pass" : "text-fail"}>
               {run.passed}
             </span>

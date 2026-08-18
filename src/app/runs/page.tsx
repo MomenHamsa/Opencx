@@ -1,6 +1,7 @@
 import { PageHeader } from "@/components/ui/PageHeader";
 import Link from "next/link";
 import { formatTokens, formatUsd } from "@/lib/cost";
+import { Sparkline } from "@/components/eval/Sparkline";
 import { listRuns, loadBaseline } from "@/lib/eval/store";
 
 /**
@@ -18,9 +19,25 @@ export const dynamic = "force-dynamic";
 export default async function RunsPage() {
   const [runs, baseline] = await Promise.all([listRuns(), loadBaseline()]);
 
+  const trend = [...runs]
+    .reverse()
+    .filter((r) => r.total > 0)
+    .slice(-12)
+    .map((r) => ({ rate: r.passed / r.total, label: `${r.promptVersion} ${r.passed}/${r.total}` }));
+
   return (
     <main className="mx-auto max-w-6xl px-6 py-8">
-      <PageHeader title="Run history">
+      <PageHeader
+        title="Run history"
+        aside={
+          trend.length > 1 ? (
+            <div className="flex flex-col items-end gap-1">
+              <Sparkline points={trend} width={140} height={32} />
+              <span className="eyebrow">pass rate, last {trend.length} runs</span>
+            </div>
+          ) : undefined
+        }
+      >
         Every evaluation, newest first. A score is only meaningful next to the prompt and the model that produced it.
       </PageHeader>
 

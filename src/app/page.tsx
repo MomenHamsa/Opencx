@@ -1,6 +1,6 @@
 import { PageHeader } from "@/components/ui/PageHeader";
 import { EvalScreen } from "@/components/eval/EvalScreen";
-import { loadBaseline } from "@/lib/eval/store";
+import { listRuns, loadBaseline } from "@/lib/eval/store";
 import { providerOptions } from "@/lib/llm/factory";
 import { loadWorkspace } from "@/lib/workspace/store";
 
@@ -8,7 +8,13 @@ import { loadWorkspace } from "@/lib/workspace/store";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const baseline = await loadBaseline();
+  const [baseline, recentRuns] = await Promise.all([loadBaseline(), listRuns(12)]);
+
+  // Oldest first, so the sparkline reads left-to-right as time.
+  const trend = [...recentRuns]
+    .reverse()
+    .filter((r) => r.total > 0)
+    .map((r) => ({ rate: r.passed / r.total, label: `${r.promptVersion} ${r.passed}/${r.total}` }));
 
   // Only id and label cross to the client. The system prompts are several kilobytes
   // each and the browser has no use for them on this screen.
@@ -34,6 +40,7 @@ export default async function Home() {
 
       <EvalScreen
         testCount={workspace.cases.length}
+        trend={trend}
         prompts={prompts}
         initialBaseline={baseline}
         providers={providers}
