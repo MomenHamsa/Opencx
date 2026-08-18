@@ -46,9 +46,14 @@ export default async function RunsPage() {
                 const isBaseline = baseline?.runId === run.runId;
                 const rate = run.total === 0 ? 0 : run.passed / run.total;
                 return (
-                  <tr key={run.runId} className="border-b border-line/60">
+                  <tr
+                    key={run.runId}
+                    className="border-b border-line/60 transition-colors hover:bg-raised"
+                  >
                     <td className="px-3 py-1.5 font-mono text-[11px] text-muted">
-                      {run.createdAt.replace("T", " ").slice(0, 19)}
+                      <Link href={`/runs/${run.runId}`} className="hover:text-text hover:underline">
+                        {run.createdAt.replace("T", " ").slice(0, 19)}
+                      </Link>
                       {isBaseline && <span className="ml-2 text-info">baseline</span>}
                     </td>
                     <td className="px-3 py-1.5 font-mono text-xs">{run.promptVersion}</td>
@@ -56,10 +61,12 @@ export default async function RunsPage() {
                       {run.provider}/{run.model}
                     </td>
                     <td className="tnum px-3 py-1.5 font-mono text-xs">
-                      <span className={rate === 1 ? "text-pass" : rate < 0.5 ? "text-fail" : ""}>
-                        {run.passed}
-                      </span>
-                      <span className="text-muted">/{run.total}</span>
+                      <Link href={`/runs/${run.runId}`} className="hover:underline">
+                        <span className={rate === 1 ? "text-pass" : rate < 0.5 ? "text-fail" : ""}>
+                          {run.passed}
+                        </span>
+                        <span className="text-muted">/{run.total}</span>
+                      </Link>
                     </td>
                     <td className="tnum px-3 py-1.5 text-right font-mono text-[11px] text-muted">
                       {run.usage === undefined

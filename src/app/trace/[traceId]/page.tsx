@@ -63,7 +63,18 @@ export default async function TracePage({
 
       <Facts trace={trace} />
 
-      <Section title="Ticket">
+      <SectionNav
+        items={[
+          { id: "ticket", label: "Ticket" },
+          { id: "retrieved", label: `Retrieved (${trace.retrieved.length})` },
+          { id: "tools", label: `Tools (${trace.toolCalls.length})` },
+          { id: "output", label: "Output" },
+          { id: "reply", label: "Reply" },
+          { id: "raw", label: "Raw" },
+        ]}
+      />
+
+      <Section id="ticket" title="Ticket">
         <div className="font-mono text-[11px] text-muted">
           {trace.ticket.customerEmail} · {trace.ticket.channel}
         </div>
@@ -71,7 +82,7 @@ export default async function TracePage({
         <pre className="mt-1 whitespace-pre-wrap font-sans text-muted">{trace.ticket.body}</pre>
       </Section>
 
-      <Section title={`Retrieved articles (${trace.retrieved.length})`}>
+      <Section id="retrieved" title={`Retrieved articles (${trace.retrieved.length})`}>
         {missingExpected.length > 0 && (
           <div className="mb-3 rounded border border-info/50 bg-info/10 px-3 py-2 text-xs">
             <span className="font-mono font-semibold text-info">retrieval miss</span> — the
@@ -125,7 +136,7 @@ export default async function TracePage({
         </p>
       </Section>
 
-      <Section title={`Tool calls (${trace.toolCalls.length})`}>
+      <Section id="tools" title={`Tool calls (${trace.toolCalls.length})`}>
         <div className="flex flex-col gap-2">
           {trace.toolCalls.map((c, i) => (
             <div key={`${c.name}-${i}`} className="rounded border border-line bg-raised px-3 py-2">
@@ -148,7 +159,7 @@ export default async function TracePage({
         </div>
       </Section>
 
-      <Section title="Structured output">
+      <Section id="output" title="Structured output">
         <div className="grid grid-cols-2 gap-x-6 gap-y-1 font-mono text-xs sm:grid-cols-3">
           <Field k="intent" v={trace.output.intent} />
           <Field k="urgency" v={trace.output.urgency} />
@@ -158,13 +169,13 @@ export default async function TracePage({
         </div>
       </Section>
 
-      <Section title="Reply, as the customer would read it">
+      <Section id="reply" title="Reply, as the customer would read it">
         <div className="rounded border border-line bg-raised px-4 py-3">
           <pre className="whitespace-pre-wrap font-sans">{trace.output.reply}</pre>
         </div>
       </Section>
 
-      <Section title="Raw model response">
+      <Section id="raw" title="Raw model response">
         <details className="rounded border border-line bg-raised">
           <summary className="cursor-pointer px-3 py-2 font-mono text-xs text-muted">
             {trace.rawModelText.length} characters — verbatim, before any parsing
@@ -204,11 +215,45 @@ function Field({ k, v }: { k: string; v: string }) {
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+/** Sections carry a slug id so the jump bar above can link straight to them. */
+function Section({
+  id,
+  title,
+  children,
+}: {
+  id: string;
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
-    <section className="mt-6">
-      <h2 className="mb-2 font-mono text-xs tracking-wide text-muted uppercase">{title}</h2>
+    <section id={id} className="mt-8 scroll-mt-24">
+      <h2 className="eyebrow mb-2">{title}</h2>
       {children}
     </section>
+  );
+}
+
+/**
+ * A jump bar for a page that is genuinely long.
+ *
+ * This is where every failed row sends you, and the answer is rarely in the first
+ * screenful — a retrieval failure lives in the articles section, a parse failure in
+ * the raw model text at the very bottom. Sticky, because the scroll is the problem.
+ */
+function SectionNav({ items }: { items: { id: string; label: string }[] }) {
+  return (
+    <nav className="sticky top-0 z-10 -mx-6 mb-2 border-b border-line bg-ink/95 px-6 py-2 backdrop-blur">
+      <div className="flex flex-wrap gap-x-4 gap-y-1">
+        {items.map((i) => (
+          <a
+            key={i.id}
+            href={`#${i.id}`}
+            className="font-mono text-[11px] text-muted transition-colors hover:text-accent"
+          >
+            {i.label}
+          </a>
+        ))}
+      </div>
+    </nav>
   );
 }

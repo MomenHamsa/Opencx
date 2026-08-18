@@ -426,3 +426,101 @@ falsify is just a comment.
    safe escalation. Verified against ten failure modes, not asserted.
 4. **The two failing tickets are the honest part.** Both are retrieval, both are
    correctly diagnosed, and both were left in.
+
+---
+
+## Layer 11 — the workspace (added when this became a tool)
+
+The three things a person configures used to be `const` arrays compiled into the
+binary. They are now JSON on disk, and this layer is what made that safe.
+
+### `src/lib/seed/*.ts`
+The bundled sample knowledge base, tests and prompts. Not the live data any more —
+the seed a fresh workspace is created from.
+
+**Defend:** *why keep them in code at all?* So `rm -rf data/config` always returns a
+working demo, and so a fresh clone runs without setup.
+
+### `src/lib/workspace/store.ts`
+Loads and persists the workspace, seeding from the samples when a file is missing.
+
+**Defend:** *why files rather than a database?* Single user, a host with a real
+filesystem, and a JSON file you can read, diff and hand-edit is worth more here than
+query support nobody needs. Note the write path: temp file then rename, so a crash
+mid-write cannot leave half a knowledge base behind. And note `data/config/` is
+gitignored — real customer tickets must not reach a public repo via `git add -A`.
+
+### `src/lib/workspace/validate.ts`
+Validates authored content the same way `agent/validate.ts` validates model output.
+
+**Defend:** *why validate a form as strictly as a model?* Because a test citing an
+article id that does not exist can never pass, and would read as an agent bug forever.
+Catching it at save time is the difference between a typo and a mystery.
+
+### `src/lib/workspace/mutations.ts`
+Every change a person can make, with the integrity rules.
+
+**Defend — this is the interesting file.** Three rules, and the second is the one that
+matters: you cannot delete an article a test cites; **a prompt that has been evaluated
+is frozen**; nothing is written unless it validates. The frozen rule is not
+bureaucracy — a score is attached to that exact wording, so letting it change
+afterwards would make every historical run and every baseline a lie. It is the only
+reason the baseline diff can be trusted.
+
+---
+
+## Layer 12 — the second and third providers
+
+### `src/lib/llm/openai.ts`
+Claude has `real.ts`; this is OpenAI. Same interface, and the contrast is the argument
+for having one: **this adapter forwards `temperature`, the Anthropic one must strip it
+or the request 400s.**
+
+**Defend:** *why the retry loop?* Reasoning-family models rename `max_tokens` and
+reject `temperature`, and which models those are is a moving target. The adapter
+attempts the expected shape and retries once on a parameter complaint, so a wrong
+guess costs one retry rather than failing an eval run.
+
+### `src/lib/cost.ts`
+One table of token prices, and the estimate built from it.
+
+**Defend:** *why is the dollar figure labelled "est." everywhere?* Because token counts
+come back from the provider and are exact, while prices are a local table that drifts.
+Unknown models return null rather than a number I invented.
+
+### `src/lib/eval/judge.ts` — the model judge
+`createLLMJudge` grades grounding with a real model.
+
+**Defend — the design decision here is the failure mode.** A judge that cannot reach a
+verdict marks the check **skipped**, not failed. Counting a rate-limited judge as a
+grounding failure would invent a regression; counting it as a pass would hide a real
+one. "I could not check this" is the only honest third answer.
+
+---
+
+## Layer 13 — the UI system
+
+### `src/app/globals.css`
+The palette, with **one meaning per colour**: accent = do this / you are here, warn =
+costs money or your prompt owns this, info = a different layer, pass and fail =
+outcomes.
+
+**Defend:** *why is the accent split into two tokens?* Because one colour cannot be
+both a readable label on a dark surface and a button background that white text passes
+AA against — the first wants brightness, the second wants darkness. Measured, not
+guessed: white on the bright shade was 3.86:1 and failed.
+
+### `src/components/nav/Nav.tsx`, `WorkspaceBar.tsx`
+Navigation grouped as author → run → inspect, and a bar showing
+`8 articles → 14 tests → 2 prompts`.
+
+**Defend:** *why that order?* It is the dependency order — tests cite articles, so the
+knowledge base has to exist first — and the arrows make it visible. A zero renders as
+a call to action rather than a number.
+
+### `src/middleware.ts`
+HTTP Basic when `APP_PASSWORD` is set, open when it is not.
+
+**Defend:** *why constant-time comparison for a one-user tool?* Because a plain `===`
+returns as soon as two characters differ, which leaks the length of the correct prefix,
+and avoiding that is about six lines.

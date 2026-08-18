@@ -1,10 +1,14 @@
 # CX Agent Lab
 
-A miniature support AI agent, plus the two tools you need to keep one honest: **a
-trace recorder** that leaves a receipt for every answer, and **an evaluation harness**
-that scores the agent against a fixed exam of realistic tickets.
+A workbench for keeping a support AI agent honest. You author the knowledge it can
+draw on, the tests it has to pass, and the prompts that steer it — then score every
+prompt change against the same exam and see exactly what improved and what broke.
 
-It runs fully offline. No API keys, no database, no accounts.
+Every answer leaves a **trace** you can read. Every run is **diffed against a
+baseline**, so "this prompt is better" becomes a number with evidence behind it.
+
+Runs offline on a bundled mock provider with no keys at all. Add an OpenAI or
+Anthropic key to score against a real model.
 
 ```bash
 npm install
@@ -62,73 +66,32 @@ the harness says so. See [Known failures](#known-failures).
 
 ---
 
-## The four screens
+## The screens
 
-### 1. Eval Run — `/`
+Grouped the way the nav is, because that is the order you use them in.
 
-The landing page. Pick a prompt version and a provider, press **Run Evaluation**, and
-results stream in row by row rather than appearing all at once when the suite finishes.
+### Author — what gets graded
 
-You get a score, a table (ticket, subject, PASS/FAIL, action taken, failure category,
-latency) and a diff panel against the saved baseline: *"v2 12/14 vs baseline v1 6/14 —
-Fixed: T-009, T-010, T-011, T-012, T-013, T-014. Regressed: none."*
+| Screen | What it is for |
+|---|---|
+| **Knowledge** `/kb` | The articles the agent may ground an answer in. What is *missing* here is what it has to escalate, so deliberate gaps are a feature. Tags are weighted above body text by the retriever, because a human chose them. |
+| **Tests** `/tests` | The exam. Each test is a ticket plus what a good agent must do: the action, optionally an intent, which article it should cite, and phrases it must never say. Leave intent blank when a ticket is genuinely two things at once. |
+| **Prompts** `/prompts` | System prompts as append-only versions. **Once a version has been evaluated its text is frozen** — a score is attached to that exact wording — and editing offers "save as new version" instead. That is the only reason the baseline diff can be trusted. |
 
-Click any row to expand it and see exactly which checks failed and why:
+### Run
 
-```
-FAIL  action             expected escalate, got reply
-FAIL  forbidden_content  reply contains "100% discount", "i have applied"
-FAIL  grounded           states "100%", which appears nowhere in the retrieved articles
-```
+| Screen | What it is for |
+|---|---|
+| **Run eval** `/` | Pick a prompt, a provider and a model, and score every test. Results stream in row by row. The score carries a delta against your baseline, plus tokens and estimated cost. Failures can be filtered by category, and a summary names the check failing most often. |
+| **Trace** `/trace/[id]` | The receipt for one answer: retrieved articles with scores and matched terms, tool calls with inputs and durations, the structured output, the reply as the customer would read it, and the raw model text verbatim. A banner calls out when the article holding the answer was never retrieved. |
 
-**Save as baseline** promotes the current run to be the thing future runs are compared
-against.
+### Inspect
 
-### 2. Trace Detail — `/trace/[traceId]`
-
-The receipt for one answer. Reached from the `open` link on any row.
-
-- Retrieved articles, ranked, with their relevance scores and the exact terms that
-  matched — plus a clear banner when the article that holds the answer is missing from
-  the set entirely.
-- Tool calls with inputs, outputs and durations.
-- The structured output: intent, urgency, action, confidence, citations.
-- The reply, rendered as the customer would read it.
-- The **raw model response**, verbatim, in a collapsible section.
-- A degraded banner when the model's answer was rejected.
-
-This is the artifact that answers "why did the agent say that?" without reproducing the
-customer's environment.
-
-### 3. Prompt Diff — `/prompts`
-
-v1 and v2 side by side, with their changelogs and full system text.
-
-The headline is a **rules matrix**: which of the five safety rules each prompt
-contains. That is the diff that matters — a line-level text diff between two prose
-prompts that share no wording renders as one deletion and one addition, which tells you
-nothing.
-
-Underneath, a **per-ticket outcome table**: ticket → v1 result → v2 result → change.
-Six rows read `fixed`, none read `regressed`, and two read `still failing · retrieval`.
-
-Both columns are pinned to the mock provider and stamped with the run's timestamp,
-because comparing prompts only means anything with the provider held fixed — and
-because a reused run that predates a prompt edit should say so.
-
-### 4. Playground — `/playground`
-
-Paste any ticket, pick a prompt version, run it, land on its trace.
-
-This is for the moment someone asks *"what happens if a customer asks X?"* — the answer
-should be typing it in, not hand-waving. Four one-click examples are built in, including
-the prompt injection: run it on v1 and the agent applies the discount, switch to v2 and
-it escalates without repeating the instruction back.
-
-It calls the same `runAgent` the exam calls. No separate code path, so what you see here
-is what the exam would have seen.
-
----
+| Screen | What it is for |
+|---|---|
+| **Compare** `/compare` | Two prompts side by side — which safety rules each contains, both changelogs, and a per-ticket outcome table. |
+| **History** `/runs` | Every run with its prompt, model, score, tokens and cost. Click one to see exactly which tests failed in it. |
+| **Playground** `/playground` | Paste any ticket, run it, land on its trace. Same code path as the exam. Includes one-click examples, among them the prompt injection and the structural injection this project found and fixed. |
 
 ## Also runnable from the terminal
 
@@ -270,7 +233,9 @@ Written out because a tool that oversells itself is worse than one that does les
   well-documented ones; a real model would find its own. **The absolute scores prove
   nothing about a real model.** What they demonstrate is that the harness detects those
   failures, categorises them correctly, and shows the delta between two prompts.
-- **The offline judge is a specificity check, not a model.** It extracts numeric
+- **The offline judge is a specificity check, not a model.** A real model judge is
+  available in the UI when a key is configured, which is the honest answer to the
+  limitation below — but it costs one extra call per test and is off by default. It extracts numeric
   specifics — figures, percentages, dates, money, quarters — and asks whether each
   appears in the evidence the agent was shown. It catches the invented specific, which
   is the expensive kind of ungrounded claim. **It misses ungrounded claims with no
